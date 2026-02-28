@@ -1,6 +1,7 @@
 {
   "projects": {
-    "firebase deploy": "tienda-ding-dong"
+    "firebase deploy": "tienda-ding-dong",
+    "plantas-din": "plantas-dingdong"
   },
   "targets": {},
   "etags": {}

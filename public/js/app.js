@@ -115,7 +115,7 @@ function displayProducts(productsToShow) {
             `Descripción: ${product.description}\n` +
             `¿Podrían darme más información?`
         );
-        const whatsappUrl = `https://wa.me/573001234567?text=${whatsappMessage}`;
+        const whatsappUrl = `https://wa.me/573233445403?text=${whatsappMessage}`;
 
         productCard.innerHTML = `
             <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
@@ -288,13 +288,13 @@ function selectPayment(method) {
 
     switch (method) {
         case 'nequi':
-            text = '💰 *Nequi*\nNúmero: 300 123 4567\nA nombre de: GreenWood Tienda\n\n*Pasos:*\n1. Abre Nequi\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
+            text = '💰 *Nequi*\nNúmero: 3233445403\nA nombre de: GreenWood Tienda\n\n*Pasos:*\n1. Abre Nequi\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
             break;
         case 'daviplata':
-            text = '💰 *DaviPlata*\nNúmero: 300 123 4567\nA nombre de: GreenWood Tienda\n\n*Pasos:*\n1. Abre DaviPlata\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
+            text = '💰 *DaviPlata*\nNúmero: 3233445403\nA nombre de: GreenWood Tienda\n\n*Pasos:*\n1. Abre DaviPlata\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
             break;
         case 'dale':
-            text = '💰 *Dale*\nNúmero: 300 123 4567\nA nombre de: GreenWood Tienda\n\n*Pasos:*\n1. Abre Dale\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
+            text = '💰 *Dale*\nNúmero: 3233445403\nA nombre de: GreenWood Tienda\n\n*Pasos:*\n1. Abre Dale\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
             break;
         case 'tarjeta':
             text = '💳 *Pago con tarjeta*\nAceptamos todas las tarjetas de crédito y débito.\n\n*Pasos:*\n1. Te enviaremos un enlace seguro de pago\n2. Ingresa los datos de tu tarjeta\n3. Confirma la transacción\n\nNota: El enlace se enviará por WhatsApp';
@@ -311,7 +311,7 @@ function confirmPayment() {
         return;
     }
 
-    let message = "Hola GreenWood, quiero realizar el siguiente pedido:\n\n";
+    let message = "Hola Ding-Dong, quiero realizar el siguiente pedido:\n\n";
     let total = 0;
     cart.forEach(item => {
         message += `• ${item.name} x${item.quantity} - $${(item.price * item.quantity).toLocaleString()}\n`;
@@ -323,7 +323,7 @@ function confirmPayment() {
     message += `\n💳 Método de pago: ${paymentNames[selectedPayment]}\n\n`;
     message += "Mis datos:\nNombre: [Tu nombre]\nTeléfono: [Tu teléfono]\nDirección: [Tu dirección]";
 
-    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/573235445403?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 
     cart = [];

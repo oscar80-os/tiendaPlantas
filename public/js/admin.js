@@ -83,13 +83,13 @@ function loadAdminPanel() {
                     <a href="https://instagram.com/greenwood_colombia" target="_blank" class="social-btn instagram" style="width: 40px; height: 40px; position: relative;">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://tiktok.com/@greenwood_colombia" target="_blank" class="social-btn tiktok" style="width: 40px; height: 40px;">
+                    <a href="https://www.tiktok.com/@tiendaderegalosding" target="_blank" class="social-btn tiktok" style="width: 40px; height: 40px;">
                         <i class="fab fa-tiktok"></i>
                     </a>
-                    <a href="https://facebook.com/greenwood.colombia" target="_blank" class="social-btn facebook" style="width: 40px; height: 40px;">
+                    <a href="https://www.facebook.com/profile.php?id=61586458616167" target="_blank" class="social-btn facebook" style="width: 40px; height: 40px;">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="https://wa.me/573001234567" target="_blank" class="social-btn whatsapp" style="width: 40px; height: 40px;">
+                    <a href="https://wa.me/573233445403" target="_blank" class="social-btn whatsapp" style="width: 40px; height: 40px;">
                         <i class="fab fa-whatsapp"></i>
                     </a>
                     <span style="color: #666; margin: 0 10px;">|</span>

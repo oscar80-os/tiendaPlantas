@@ -57,13 +57,16 @@ async function loadProducts() {
 // Productos de ejemplo
 function loadSampleProducts() {
     products = [
-        { id: '1', name: 'Helecho Boston', description: 'Planta de interior de fácil cuidado', price: 35000, category: 'plantas', image: 'https://images.unsplash.com/photo-1593691509543-55-32e3e373181?w=400' },
+        { id: '1', name: 'Helecho Boston', description: 'Planta de interior de fácil cuidado', price: 75000, category: 'plantas', image: './img/helechoboston.png' },
         { id: '2', name: 'Matera Artesanal', description: 'Matera de barro hecha a mano', price: 45000, category: 'materas', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400' },
-        { id: '3', name: 'Estante Flotante', description: 'Estante de madera de pino', price: 85000, category: 'madera', image: 'https://images.unsplash.com/photo-1595428774223-ef52b71ac8cf?w=400' },
+        { id: '3', name: 'Estante Flotante', description: 'Estante de madera de pino', price: 85000, category: 'madera', image: './img/estanteflotante.png' },
         { id: '4', name: 'Suculenta Echeveria', description: 'Suculenta de fácil cuidado', price: 15000, category: 'plantas', image: 'https://images.unsplash.com/photo-1509423350716-97f9360b4e09?w=400' },
-        { id: '5', name: 'Maceta Colgante', description: 'Maceta de cerámica con diseño moderno', price: 28000, category: 'materas', image: 'https://images.unsplash.com/photo-1614597204159-1d9aaf5a9b3c?w=400' },
-        { id: '6', name: 'Banco de Jardín', description: 'Banco de madera tratada para exterior', price: 120000, category: 'madera', image: 'https://images.unsplash.com/photo-1595246140625-573b3c444f8e?w=400' }
-    ];
+        { id: '5', name: 'Maceta Colgante', description: 'Maceta de cerámica con diseño moderno', price: 78000, category: 'materas', image: './img/materacolgante.png' },
+        { id: '6', name: 'Banco de Jardín', description: 'Banco de madera tratada para exterior', price: 380000, category: 'madera', image: './img/bancojardin.png' },
+        { id: '7', name: 'Matera Blanca Oro', description: 'Matera (Barro, pintada) de 40cm diametro x 60cm de alto', price: 120000, category: 'materas', image: './img/materablancaoro.png' },
+        { id: '8', name: 'Matera Indijena Azul', description: 'Matera (Barro, pintada) de 40cm diametro x 60cm de alto', price: 120000, category: 'materas', image: './img/materaindigenaazul.png' },
+        { id: '9', name: 'Estante pino canadiense', description: 'Estante madera para materas 180cmm de alto por 80cm de ancho y 30 de fondo', price: 250000, category: 'madera', image: './img/estantenelson.png' },
+    ]; 
     applyFiltersAndSearch();
 }
 

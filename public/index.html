@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
 </head>
 <body>
     <!-- Header -->
@@ -14,17 +15,18 @@
         <nav class="navbar">
             <div class="logo">
             <a href="/">
-                <img src="img/logo.png">
+                <img src="img/logoSinFondo1.png">
                 <h1></h1>
             </a>
         </div>
-            <div class="nav-links">
-                <a href="#inicio">Inicio</a>
-                <a href="#productos">Plantas</a>
-                <a href="#productos">Materas</a>
-                <a href="#productos">Madera</a>
-                <a href="#productos">Contacto</a>
-            </div>
+           <div class="nav-links">
+            <a href="#productos">Plantas</a>
+            <a href="#productos">Materas</a>
+            <a href="#productos">Madera</a>
+            <a href="#productos">Joyas</a>
+            <a href="#productos">Forja</a>
+            <a href="#productos">Cursos</a>
+        </div>
             <div style="display: flex; align-items: center; gap: 15px;">
                 <!-- Redes sociales en header -->
                 <div class="social-header">
@@ -55,7 +57,7 @@
         </div>
     </section>
 
-   
+   <a href="/cursos/login.html">Mis Cursos</a>
     <!-- Productos -->
     <section id="productos" class="products">
         <h2>Nuestros Productos</h2>
@@ -71,11 +73,15 @@
             <button class="filter-btn" onclick="filterProducts('plantas')">Plantas</button>
             <button class="filter-btn" onclick="filterProducts('materas')">Materas</button>
             <button class="filter-btn" onclick="filterProducts('madera')">Madera</button>
+            <button class="filter-btn" onclick="filterProducts('joyas')">Joyas</button>
+            <button class="filter-btn" onclick="filterProducts('forja')">Forja</button>
+            <button class="filter-btn" onclick="filterProducts('cursos')">Cursos</button>
         </div>
         <div class="products-grid" id="products-container">
             <!-- Productos se cargarán dinámicamente -->
         </div>
     </section>
+
 
     <!-- Carrito de Compras -->
     <div id="cart-sidebar" class="cart-sidebar">

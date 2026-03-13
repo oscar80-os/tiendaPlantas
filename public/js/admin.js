@@ -431,3 +431,32 @@ adminStyles.textContent = `
     }
 `;
 document.head.appendChild(adminStyles);
+
+//cursos firebase
+
+function subirCurso(){
+
+let titulo=document.getElementById("titulo").value;
+let archivo=document.getElementById("video").files[0];
+
+let ref=storage.ref("cursos/"+archivo.name);
+
+ref.put(archivo).then(snapshot=>{
+
+snapshot.ref.getDownloadURL().then(url=>{
+
+db.collection("cursos").add({
+
+titulo:titulo,
+video:url,
+fecha:Date.now()
+
+});
+
+alert("Curso subido");
+
+});
+
+});
+
+}

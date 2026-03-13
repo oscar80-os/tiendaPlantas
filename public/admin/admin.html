@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Administrador Cursos</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+</head>
+
+<body>
+
+<h2>Subir nuevo curso</h2>
+
+<input id="titulo" placeholder="Nombre del curso">
+
+<input type="file" id="video">
+
+<button onclick="subirCurso()">Subir Curso</button>
+
+<script src="../js/firebase.js"></script>
+<script src="../js/admin.js"></script>
+
+</body>
+</html>

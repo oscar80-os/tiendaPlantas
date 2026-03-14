@@ -66,21 +66,15 @@ function loadSampleProducts() {
         { id: '7', name: 'Matera Blanca Oro', description: 'Matera (Barro, pintada) de 40cm diametro x 60cm de alto', price: 120000, category: 'materas', image: './img/materablancaoro.png' },
         { id: '8', name: 'Matera Indijena Azul', description: 'Matera (Barro, pintada) de 40cm diametro x 60cm de alto', price: 120000, category: 'materas', image: './img/materaindigenaazul.png' },
         { id: '9', name: 'Estante pino canadiense', description: 'Estante madera para materas 180cmm de alto por 80cm de ancho y 30 de fondo', price: 250000, category: 'madera', image: './img/estantenelson.png' },
-        { id: '10', name: 'Anillo oro 18K', description: 'Anillo en oro 18K con esmeralda y diamantes ', price: 8500000, category: 'joyas', image: './img/anillo.png' },
-        { id: '11', name: 'Cadena Dije oro 18K', description: 'Cadena con dije de hoja ', price: 3500000, category: 'joyas', image: './img/cadenaDijeOro.png' },
-        { id: '12', name: 'Collar oro 18K', description: 'Collar oro 18K con dige en diamantes ', price: 6500000, category: 'joyas', image: './img/collarOro.png' },
-        { id: '13', name: 'Aretes plata S925', description: 'Aretes plata con circones ', price: 130000, category: 'joyas', image: './img/aretesPlata.png' },
-        { id: '14', name: 'Cadena plata S925', description: 'Cadena con dije de rama ', price: 150000, category: 'joyas', image: './img/cadenaDijePlata.png' },
-        { id: '15', name: 'Cadena plata S925', description: 'Cadena con dije de hoja  ', price: 145000, category: 'joyas', image: './img/collarDijePlata.png' },
-        { id: '16', name: 'Estante metal amarillo', description: 'Estante perfecto para tus materas  ', price: 345000, category: 'forja', image: './img/estanteAmarillo.png' },
-        { id: '17', name: 'Estante doble colores surtidos', description: 'Decora tu pared, doble con estos estantes  ', price: 245000, category: 'forja', image: './img/estanteDoble.png' },
-        { id: '18', name: 'Estante metal amarillo pared', description: 'Estante perfecto para tus materas  ', price: 185000, category: 'forja', image: './img/estantePared.png' },
-        { id: '19', name: 'Estante metal colores', description: 'Estante unitarios con colores surtidos  ', price: 365000, category: 'forja', image: './img/estantePared2.png' },
-        { id: '20', name: 'Estante combinado', description: 'Estante perfecto para tus materas  ', price: 285000, category: 'forja', image: './img/estantePared3.png' },
-        { id: '21', name: 'Estante metal rojo', description: 'Estante perfecto para tus materas  ', price: 345000, category: 'forja', image: './img/estanteRojo.png' },
-        { id: '22', name: 'Curso cactus y suculentas', description: 'Aprende todo sobre tus cactus y suculentas  ', price: 120000, category: 'cursos', image: './img/cursoCactus.png' },
-        { id: '23', name: 'Curso Bonsái', description: 'Aprende todo sobre el bonsái y sus cuidados  ', price: 150000, category: 'cursos', image: './img/cursoBonsai1.png' },
-        { id: '24', name: 'Curso Plantas Exterior', description: 'Aprende todo sobre palntar tu jardin  ', price: 120000, category: 'cursos', image: './img/cursoExterior.png' },
+        { id: '10', name: 'Estante metal amarillo', description: 'Estante perfecto para tus materas  ', price: 345000, category: 'forja', image: './img/estanteAmarillo.png' },
+        { id: '11', name: 'Estante doble colores surtidos', description: 'Decora tu pared, doble con estos estantes  ', price: 245000, category: 'forja', image: './img/estanteDoble.png' },
+        { id: '12', name: 'Estante metal amarillo pared', description: 'Estante perfecto para tus materas  ', price: 185000, category: 'forja', image: './img/estantePared.png' },
+        { id: '13', name: 'Estante metal colores', description: 'Estante unitarios con colores surtidos  ', price: 365000, category: 'forja', image: './img/estantePared2.png' },
+        { id: '14', name: 'Estante combinado', description: 'Estante perfecto para tus materas  ', price: 285000, category: 'forja', image: './img/estantePared3.png' },
+        { id: '15', name: 'Estante metal rojo', description: 'Estante perfecto para tus materas  ', price: 345000, category: 'forja', image: './img/estanteRojo.png' },
+        { id: '16', name: 'Curso cactus y suculentas', description: 'Aprende todo sobre tus cactus y suculentas  ', price: 120000, category: 'cursos', image: './img/cursoCactus.png' },
+        { id: '17', name: 'Curso Bonsái', description: 'Aprende todo sobre el bonsái y sus cuidados  ', price: 150000, category: 'cursos', image: './img/cursoBonsai1.png' },
+        { id: '18', name: 'Curso Plantas Exterior', description: 'Aprende todo sobre palntar tu jardin  ', price: 120000, category: 'cursos', image: './img/cursoExterior.png' },
         
     ]; 
     applyFiltersAndSearch();
@@ -95,7 +89,6 @@ function applyFiltersAndSearch() {
         if (filterText === 'plantas') category = 'plantas';
         else if (filterText === 'materas') category = 'materas';
         else if (filterText === 'madera') category = 'madera';
-        else if (filterText === 'joyas') category = 'joyas';
         else if (filterText === 'forja') category = 'forja';
         else if (filterText === 'cursos') category = 'cursos';
     }
@@ -137,7 +130,7 @@ function displayProducts(productsToShow) {
             `Descripción: ${product.description}\n` +
             `¿Podrían darme más información?`
         );
-        const whatsappUrl = `https://wa.me/573233445403?text=${whatsappMessage}`;
+        const whatsappUrl = `https://wa.me/573136254423?text=${whatsappMessage}`;
 
         productCard.innerHTML = `
             <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
@@ -310,13 +303,13 @@ function selectPayment(method) {
 
     switch (method) {
         case 'nequi':
-            text = '💰 *Nequi*\nNúmero: 3233445403\nA nombre de: Ding Dong ¡El arte de regalar!\n\n*Pasos:*\n1. Abre Nequi\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
+            text = '💰 *Nequi*\nNúmero: 3136254423\nA nombre de: Ding Dong ¡El arte de regalar!\n\n*Pasos:*\n1. Abre Nequi\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
             break;
         case 'daviplata':
-            text = '💰 *DaviPlata*\nNúmero: 3233445403\nA nombre de: Ding Dong ¡El arte de regalar!\n\n*Pasos:*\n1. Abre DaviPlata\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
+            text = '💰 *DaviPlata*\nNúmero: 3136254423\nA nombre de: Ding Dong ¡El arte de regalar!\n\n*Pasos:*\n1. Abre DaviPlata\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
             break;
         case 'dale':
-            text = '💰 *Dale*\nNúmero: 3233445403\nA nombre de: Ding Dong ¡El arte de regalar!\n\n*Pasos:*\n1. Abre Dale\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
+            text = '💰 *Dale*\nNúmero: 3136254423\nA nombre de: Ding Dong ¡El arte de regalar!\n\n*Pasos:*\n1. Abre Dale\n2. Selecciona "Enviar dinero"\n3. Ingresa el número y el valor total\n4. Confirma y envía el comprobante por este chat';
             break;
         case 'tarjeta':
             text = '💳 *Pago con tarjeta*\nAceptamos todas las tarjetas de crédito y débito.\n\n*Pasos:*\n1. Te enviaremos un enlace seguro de pago\n2. Ingresa los datos de tu tarjeta\n3. Confirma la transacción\n\nNota: El enlace se enviará por WhatsApp';
@@ -345,7 +338,7 @@ function confirmPayment() {
     message += `\n💳 Método de pago: ${paymentNames[selectedPayment]}\n\n`;
     message += "Mis datos:\nNombre: [Tu nombre]\nTeléfono: [Tu teléfono]\nDirección: [Tu dirección]";
 
-    const whatsappUrl = `https://wa.me/573235445403?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/573136254423?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 
     cart = [];

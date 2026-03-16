@@ -1,73 +1,79 @@
-const db=firebase.firestore();
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-firebase.auth().onAuthStateChanged(user=>{
+  const contenedor = document.getElementById("cursos");
+  const userEmail = document.getElementById("user-email");
 
-if(!user){
+  if (userEmail) {
+    userEmail.textContent = user.email || "";
+  }
 
-window.location="login.html";
-return;
+  contenedor.innerHTML = "<p>Cargando tus cursos...</p>";
 
+  try {
+    const inscripcionesSnap = await db
+      .collection("inscripciones")
+      .where("usuarioId", "==", user.uid)
+      .where("estado", "==", "activo")
+      .get();
+
+    if (inscripcionesSnap.empty) {
+      contenedor.innerHTML = `
+        <div class="empty-state">
+          <h3>Aún no tienes cursos activos</h3>
+          <p>Cuando te asignemos un curso aparecerá aquí.</p>
+          <a href="../index.html#productos" class="btn-link">Ver catálogo</a>
+        </div>
+      `;
+      return;
+    }
+
+    let html = "";
+
+    for (const doc of inscripcionesSnap.docs) {
+      const data = doc.data();
+      const cursoId = data.cursoId;
+
+      if (!cursoId) continue;
+
+      const cursoDoc = await db.collection("cursos").doc(cursoId).get();
+
+      if (!cursoDoc.exists) continue;
+
+      const curso = cursoDoc.data();
+
+      html += `
+        <div class="curso-card">
+          <div class="curso-thumb">
+            <img src="${curso.miniatura || 'https://via.placeholder.com/500x280?text=Curso'}" alt="${curso.titulo}">
+          </div>
+          <div class="curso-body">
+            <h3>${curso.titulo || "Curso sin título"}</h3>
+            <p>${curso.descripcion || "Sin descripción disponible."}</p>
+            <a class="btn-curso" href="curso.html?id=${cursoDoc.id}">Entrar al curso</a>
+          </div>
+        </div>
+      `;
+    }
+
+    contenedor.innerHTML = html || "<p>No se encontraron cursos disponibles.</p>";
+  } catch (error) {
+    console.error("Error cargando panel:", error);
+    contenedor.innerHTML = "<p>Error al cargar tus cursos.</p>";
+  }
+});
+
+async function logout() {
+  try {
+    await auth.signOut();
+    window.location.href = "login.html";
+  } catch (error) {
+    console.error("Error al cerrar sesión:", error);
+    alert("No se pudo cerrar sesión.");
+  }
 }
 
-db.collection("compras")
-.where("usuario","==",user.uid)
-.get()
-.then(snapshot=>{
-
-let html="";
-
-snapshot.forEach(doc=>{
-
-let curso=doc.data().curso;
-
-html+=`
-<div>
-<h3>${curso}</h3>
-<a href="curso.html?id=${curso}">Ver curso</a>
-</div>
-`;
-
-});
-
-document.getElementById("cursos").innerHTML=html;
-
-});
-
-});
-
-// curso firebase mostrar curso alumno
-
-firebase.auth().onAuthStateChanged(user=>{
-
-if(!user){
-
-window.location="login.html";
-return;
-
-}
-
-db.collection("compras")
-.where("usuario","==",user.uid)
-.get()
-.then(snapshot=>{
-
-let html="";
-
-snapshot.forEach(doc=>{
-
-let curso=doc.data().curso;
-
-html+=`
-<div>
-<h3>${curso}</h3>
-<a href="curso.html?id=${curso}">Ver curso</a>
-</div>
-`;
-
-});
-
-document.getElementById("cursos").innerHTML=html;
-
-});
-
-});
+window.logout = logout;

@@ -1,25 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Acceso Cursos</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso a cursos | Ding-Dong</title>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .box {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    h1 { margin-top: 0; color: #2e7d32; }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #2e7d32;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .secondary {
+      background: #455a64;
+    }
+    .link {
+      margin-top: 12px;
+      display: block;
+      text-align: center;
+      color: #2e7d32;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="box">
+    <h1>Acceso a cursos</h1>
+    <p>Ingresa con tu correo para ver tus cursos.</p>
 
-<h2>Acceso a cursos</h2>
+    <input id="email" type="email" placeholder="Correo electrónico">
+    <input id="password" type="password" placeholder="Contraseña">
 
-<input id="email" placeholder="correo">
-<input id="password" type="password" placeholder="contraseña">
+    <button onclick="login()">Entrar</button>
+    <button class="secondary" onclick="register()">Crear cuenta</button>
+    <span class="link" onclick="recoverPassword()">¿Olvidaste tu contraseña?</span>
+  </div>
 
-<button onclick="login()">Entrar</button>
-<button onclick="register()">Crear cuenta</button>
-
-<script src="../js/auth.js"></script>
-
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
 </body>
 </html>

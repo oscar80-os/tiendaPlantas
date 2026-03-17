@@ -132,13 +132,3 @@ window.addEventListener("DOMContentLoaded", async () => {
 window.addToCart = addToCart;
 window.removeFromCart = removeFromCart;
 window.goCheckout = goCheckout;
-
-
-
-function comprarCurso(id, precio){
-
-    localStorage.setItem("cursoSeleccionado", id);
-    localStorage.setItem("precioCurso", precio);
-
-    window.location.href = "/cursos/checkout.html";
-}

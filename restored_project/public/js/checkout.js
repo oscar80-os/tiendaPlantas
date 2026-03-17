@@ -129,36 +129,3 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 window.startWompiCheckout = startWompiCheckout;
-
-
-document.getElementById("pagarCurso").addEventListener("click", function () {
-
-    const precio = localStorage.getItem("precioCurso");
-
-    const checkout = new WidgetCheckout({
-        currency: 'COP',
-        amountInCents: precio * 100,
-        reference: "curso_" + Date.now(),
-        publicKey: "TU_PUBLIC_KEY_WOMPI",
-        redirectUrl: window.location.origin + "/cursos/resultado.html"
-    });
-
-    checkout.open(function (result) {
-
-        if (result.transaction.status === "APPROVED") {
-
-            const db = firebase.firestore();
-            const user = firebase.auth().currentUser;
-
-            db.collection("inscripciones").add({
-                usuarioId: user.uid,
-                cursoId: localStorage.getItem("cursoSeleccionado"),
-                estado: "activo",
-                fechaCompra: new Date()
-            });
-
-        }
-
-    });
-
-});

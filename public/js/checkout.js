@@ -1,7 +1,11 @@
 const checkoutCartKey = "dingdong_course_cart";
 
 function money(value) {
-  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(value || 0);
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0
+  }).format(value || 0);
 }
 
 function getCart() {
@@ -44,39 +48,10 @@ function renderOrderSummary() {
   totalEl.textContent = money(total);
 }
 
-function buildAndSubmitWompiForm(checkout) {
-  const form = document.createElement("form");
-  form.method = "GET";
-  form.action = checkout.checkoutUrl;
-
-  const fields = {
-    "public-key": checkout.publicKey,
-    currency: checkout.currency,
-    "amount-in-cents": checkout.amountInCents,
-    reference: checkout.reference,
-    "signature:integrity": checkout.integritySignature,
-    "redirect-url": checkout.redirectUrl,
-    "customer-data:email": checkout.customerEmail || "",
-    "customer-data:full-name": checkout.customerName || "Cliente Ding-Dong",
-    "customer-data:phone-number": checkout.customerPhone || ""
-  };
-
-  Object.entries(fields).forEach(([name, value]) => {
-    if (value === undefined || value === null || value === "") return;
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = name;
-    input.value = String(value);
-    form.appendChild(input);
-  });
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
 async function startWompiCheckout() {
   const user = await protectCheckout();
   const cart = getCart();
+
   if (!cart.length) {
     alert("No hay cursos en el carrito.");
     return;
@@ -84,43 +59,46 @@ async function startWompiCheckout() {
 
   const customerName = document.getElementById("customer-name").value.trim();
   const customerPhone = document.getElementById("customer-phone").value.trim();
+
   if (!customerName) {
     alert("Escribe tu nombre completo.");
     return;
   }
 
-  const button = document.getElementById("pay-btn");
-  button.disabled = true;
-  button.textContent = "Preparando checkout...";
+  const total = cart.reduce((sum, item) => sum + Number(item.price || 0), 0);
 
-  try {
-    const token = await user.getIdToken();
-    const response = await fetch(`${functionsBaseUrl}/prepareWompiCheckout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        items: cart.map(item => item.id),
-        customerName,
-        customerPhone
-      })
-    });
+  const checkout = new WidgetCheckout({
+    currency: "COP",
+    amountInCents: total * 100,
+    reference: "curso_" + Date.now(),
+    publicKey: "pub_test_sLku86QTMKflFC4LR8ENqHOrYM3hjUAA",
+    redirectUrl: window.location.origin + "/cursos/resultado.html"
+  });
 
-    const data = await response.json();
-    if (!response.ok || !data.ok) {
-      throw new Error(data.error || "No se pudo preparar el checkout de Wompi.");
+  checkout.open(async function (result) {
+    if (result?.transaction?.status === "APPROVED") {
+      try {
+        const batch = db.batch();
+
+        cart.forEach((item) => {
+          const ref = db.collection("inscripciones").doc();
+          batch.set(ref, {
+            usuarioId: user.uid,
+            cursoId: item.id,
+            estado: "activo",
+            fechaCompra: new Date()
+          });
+        });
+
+        await batch.commit();
+        localStorage.removeItem(checkoutCartKey);
+        window.location.href = "/cursos/mis-cursos.html";
+      } catch (error) {
+        console.error(error);
+        alert("El pago fue aprobado, pero hubo un problema activando el curso.");
+      }
     }
-
-    localStorage.setItem("last_order_id", data.orderId);
-    buildAndSubmitWompiForm(data.checkout);
-  } catch (error) {
-    console.error(error);
-    alert(error.message);
-    button.disabled = false;
-    button.textContent = "Continuar a Wompi";
-  }
+  });
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
@@ -129,36 +107,3 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 window.startWompiCheckout = startWompiCheckout;
-
-
-document.getElementById("pagarCurso").addEventListener("click", function () {
-
-    const precio = localStorage.getItem("precioCurso");
-
-    const checkout = new WidgetCheckout({
-        currency: 'COP',
-        amountInCents: precio * 100,
-        reference: "curso_" + Date.now(),
-        publicKey: "pub_test_sLku86QTMKflFC4LR8ENqHOrYM3hjUAA",
-        redirectUrl: window.location.origin + "/cursos/resultado.html"
-    });
-
-    checkout.open(function (result) {
-
-        if (result.transaction.status === "APPROVED") {
-
-            const db = firebase.firestore();
-            const user = firebase.auth().currentUser;
-
-            db.collection("inscripciones").add({
-                usuarioId: user.uid,
-                cursoId: localStorage.getItem("cursoSeleccionado"),
-                estado: "activo",
-                fechaCompra: new Date()
-            });
-
-        }
-
-    });
-
-});

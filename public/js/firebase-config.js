@@ -1,17 +1,17 @@
+// Configuración de Firebase - Reemplaza con tus credenciales
 const firebaseConfig = {
-  apiKey: "AIzaSyDuMC1oxifODI9wt4vnZRarwFBgo66sXkE",
-  authDomain: "tienda-ding-dong.firebaseapp.com",
-  projectId: "tienda-ding-dong",
-  storageBucket: "tienda-ding-dong.firebasestorage.app",
-  messagingSenderId: "379208026977",
-  appId: "1:379208026977:web:3e74844ee1e92482489320",
-  measurementId: "G-Z60MYHFEY3"
+    apiKey: "TU_API_KEY",
+    authDomain: "tu-proyecto.firebaseapp.com",
+    projectId: "tu-proyecto",
+    storageBucket: "tu-proyecto.appspot.com",
+    messagingSenderId: "tu-sender-id",
+    appId: "tu-app-id"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
+// Inicializar servicios
 const db = firebase.firestore();
+const auth = firebase.auth();
 const storage = firebase.storage();

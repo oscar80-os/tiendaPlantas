@@ -19,30 +19,35 @@ async function loadCourse() {
     return;
   }
 
-  const enrollment = await db.collection("inscripciones")
-    .where("userId", "==", user.uid)
-    .where("courseId", "==", courseId)
-    .where("status", "==", "active")
-    .limit(1)
-    .get();
+  try {
+    const enrollment = await db.collection("inscripciones")
+      .where("userId", "==", user.uid)
+      .where("courseId", "==", courseId)
+      .where("status", "==", "active")
+      .limit(1)
+      .get();
 
-  if (enrollment.empty) {
-    alert("No tienes acceso a este curso.");
-    window.location.href = "mis-cursos.html";
-    return;
-  }
+    if (enrollment.empty) {
+      alert("No tienes acceso a este curso.");
+      window.location.href = "mis-cursos.html";
+      return;
+    }
 
-  const doc = await db.collection("cursos").doc(courseId).get();
-  if (!doc.exists) {
-    alert("El curso no existe.");
-    return;
-  }
+    const doc = await db.collection("cursos").doc(courseId).get();
+    if (!doc.exists) {
+      alert("El curso no existe.");
+      return;
+    }
 
-  const course = doc.data();
-  document.getElementById("course-title").textContent = course.title || "Curso";
-  document.getElementById("course-description").textContent = course.longDescription || course.shortDescription || "";
-  if (course.videoUrl) {
-    document.getElementById("course-video").src = course.videoUrl;
+    const course = doc.data();
+    document.getElementById("course-title").textContent = course.title || "Curso";
+    document.getElementById("course-description").textContent = course.longDescription || course.shortDescription || "";
+    const video = document.getElementById("course-video");
+    if (course.videoUrl) video.src = course.videoUrl;
+    else video.outerHTML = '<p>Este curso aún no tiene video cargado.</p>';
+  } catch (error) {
+    console.error(error);
+    alert("No fue posible cargar el curso.");
   }
 }
 

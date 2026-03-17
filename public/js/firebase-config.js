@@ -1,17 +1,22 @@
-// Configuración de Firebase - Reemplaza con tus credenciales
+// Reemplaza estos valores con los de tu proyecto Firebase.
 const firebaseConfig = {
-    apiKey: "TU_API_KEY",
-    authDomain: "tu-proyecto.firebaseapp.com",
-    projectId: "tu-proyecto",
-    storageBucket: "tu-proyecto.appspot.com",
-    messagingSenderId: "tu-sender-id",
-    appId: "tu-app-id"
+  apiKey: "PEGA_AQUI_TU_API_KEY",
+  authDomain: "PEGA_AQUI_TU_AUTH_DOMAIN",
+  projectId: "PEGA_AQUI_TU_PROJECT_ID",
+  storageBucket: "PEGA_AQUI_TU_STORAGE_BUCKET",
+  messagingSenderId: "PEGA_AQUI_TU_MESSAGING_SENDER_ID",
+  appId: "PEGA_AQUI_TU_APP_ID"
 };
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
+const appSettings = {
+  functionsRegion: "us-central1"
+};
 
-// Inicializar servicios
-const db = firebase.firestore();
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
 const auth = firebase.auth();
-const storage = firebase.storage();
+const db = firebase.firestore();
+const storage = firebase.storage ? firebase.storage() : null;
+const functionsBaseUrl = "/api";

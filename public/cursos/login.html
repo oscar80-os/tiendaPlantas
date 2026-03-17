@@ -7,18 +7,20 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <style>body{font-family:Arial,sans-serif;background:#f6f8f6;margin:0;display:grid;place-items:center;min-height:100vh}.box{background:#fff;padding:28px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);width:min(420px,92vw)}input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:1px solid #ddd}button{background:#2e7d32;color:#fff;border:none;cursor:pointer}</style>
+  <script src="../js/firebase-config.js"></script>
+  <style>body{font-family:Arial,sans-serif;background:#f6f8f6;margin:0;display:grid;place-items:center;min-height:100vh}.box{background:#fff;padding:28px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);width:min(420px,92vw)}input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:1px solid #ddd}button{background:#2e7d32;color:#fff;border:none;cursor:pointer}.muted{color:#555;font-size:14px}.link{background:#fff;color:#2e7d32;border:1px solid #2e7d32}</style>
 </head>
 <body>
   <div class="box">
     <h1>Acceso a cursos</h1>
-    <p>Ingresa para ver el catálogo.</p>
+    <p class="muted">Ingresa para ver el catálogo y comprar con Wompi.</p>
     <input id="email" type="email" placeholder="Correo electrónico">
     <input id="password" type="password" placeholder="Contraseña">
     <button onclick="login()">Entrar</button>
     <button onclick="register()">Crear cuenta</button>
+    <button class="link" onclick="recoverPassword()">Recuperar contraseña</button>
+    <p class="muted"><a href="../index.html">Volver a la tienda</a></p>
   </div>
-  <script src="js/auth.js"></script>
+  <script src="../js/auth.js"></script>
 </body>
 </html>

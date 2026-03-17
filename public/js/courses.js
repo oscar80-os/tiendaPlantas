@@ -26,13 +26,11 @@ function addToCart(course) {
   }
   cart.push(course);
   saveCart(cart);
-  alert("Curso agregado al carrito.");
 }
 
 function removeFromCart(courseId) {
   const cart = getCart().filter(item => item.id !== courseId);
   saveCart(cart);
-  renderMiniCart();
 }
 
 function renderMiniCart() {
@@ -43,10 +41,10 @@ function renderMiniCart() {
 
   if (!container) return;
 
-  countEl.textContent = String(cart.length);
+  if (countEl) countEl.textContent = String(cart.length);
   if (!cart.length) {
     container.innerHTML = "<p>No has agregado cursos.</p>";
-    totalEl.textContent = money(0);
+    if (totalEl) totalEl.textContent = money(0);
     return;
   }
 
@@ -64,35 +62,42 @@ function renderMiniCart() {
     `;
   }).join("");
 
-  totalEl.textContent = money(total);
+  if (totalEl) totalEl.textContent = money(total);
 }
 
 async function renderCatalog() {
   const container = document.getElementById("courses-grid");
+  if (!container) return;
   container.innerHTML = "<p>Cargando cursos...</p>";
 
-  const snapshot = await db.collection("cursos").where("activo", "==", true).get();
-  if (snapshot.empty) {
-    container.innerHTML = "<p>No hay cursos disponibles.</p>";
-    return;
+  try {
+    const snapshot = await db.collection("cursos").where("activo", "==", true).get();
+    if (snapshot.empty) {
+      container.innerHTML = "<p>No hay cursos disponibles.</p>";
+      return;
+    }
+
+    const items = [];
+    snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+
+    container.innerHTML = items.map(course => {
+      const safeCourse = JSON.stringify({ id: course.id, title: course.title, price: course.price }).replace(/'/g, "&#39;");
+      return `
+        <article class="course-card">
+          <img src="${course.thumbnailUrl || '../img/cursoCactus.png'}" alt="${course.title}">
+          <div class="course-body">
+            <h3>${course.title}</h3>
+            <p>${course.shortDescription || ''}</p>
+            <div class="course-meta"><strong>${money(course.price)}</strong></div>
+            <button onclick='addToCart(${safeCourse})'>Agregar</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = "<p>No fue posible cargar el catálogo.</p>";
   }
-
-  const items = [];
-  snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
-
-  container.innerHTML = items.map(course => `
-    <article class="course-card">
-      <img src="${course.thumbnailUrl || 'https://via.placeholder.com/600x360?text=Curso'}" alt="${course.title}">
-      <div class="course-body">
-        <h3>${course.title}</h3>
-        <p>${course.shortDescription || ''}</p>
-        <div class="course-meta">
-          <strong>${money(course.price)}</strong>
-        </div>
-        <button onclick='addToCart(${JSON.stringify({ id: course.id, title: course.title, price: course.price }).replace(/'/g, "&#39;")})'>Agregar</button>
-      </div>
-    </article>
-  `).join("");
 }
 
 async function protectPage() {
@@ -109,7 +114,7 @@ async function protectPage() {
   });
 }
 
-async function goCheckout() {
+function goCheckout() {
   const cart = getCart();
   if (!cart.length) {
     alert("Agrega al menos un curso.");
@@ -124,5 +129,6 @@ window.addEventListener("DOMContentLoaded", async () => {
   renderMiniCart();
 });
 
+window.addToCart = addToCart;
 window.removeFromCart = removeFromCart;
 window.goCheckout = goCheckout;

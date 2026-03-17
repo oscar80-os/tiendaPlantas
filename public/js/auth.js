@@ -9,6 +9,26 @@ function getFormData() {
   };
 }
 
+async function ensureUserDocument(user, extra = {}) {
+  const ref = db.collection("usuarios").doc(user.uid);
+  const snap = await ref.get();
+  if (!snap.exists) {
+    await ref.set({
+      uid: user.uid,
+      email: (user.email || "").toLowerCase(),
+      rol: "cliente",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      ...extra
+    }, { merge: true });
+  } else {
+    await ref.set({
+      email: (user.email || "").toLowerCase(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      ...extra
+    }, { merge: true });
+  }
+}
+
 async function login() {
   const { email, password } = getFormData();
   if (!email || !password) {
@@ -17,7 +37,8 @@ async function login() {
   }
 
   try {
-    await auth.signInWithEmailAndPassword(email, password);
+    const cred = await auth.signInWithEmailAndPassword(email, password);
+    await ensureUserDocument(cred.user);
     window.location.href = "cursos.html";
   } catch (error) {
     alert(getFirebaseErrorMessage(error));
@@ -38,13 +59,25 @@ async function register() {
 
   try {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
-    await db.collection("usuarios").doc(cred.user.uid).set({
-      uid: cred.user.uid,
-      email,
+    await ensureUserDocument(cred.user, {
       rol: "cliente",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      acceptedTermsAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     window.location.href = "cursos.html";
+  } catch (error) {
+    alert(getFirebaseErrorMessage(error));
+  }
+}
+
+async function recoverPassword() {
+  const email = $("email").value.trim().toLowerCase();
+  if (!email) {
+    alert("Escribe tu correo para enviarte el enlace de recuperación.");
+    return;
+  }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    alert("Te enviamos un correo para restablecer tu contraseña.");
   } catch (error) {
     alert(getFirebaseErrorMessage(error));
   }
@@ -65,6 +98,8 @@ function getFirebaseErrorMessage(error) {
       return "No existe una cuenta con ese correo.";
     case "auth/wrong-password":
       return "La contraseña es incorrecta.";
+    case "auth/too-many-requests":
+      return "Demasiados intentos. Intenta de nuevo más tarde.";
     default:
       return error.message || "Ocurrió un error.";
   }
@@ -73,3 +108,4 @@ function getFirebaseErrorMessage(error) {
 window.login = login;
 window.register = register;
 window.logout = logout;
+window.recoverPassword = recoverPassword;

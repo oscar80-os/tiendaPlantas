@@ -38,117 +38,88 @@ function renderOrderSummary() {
   let total = 0;
   box.innerHTML = cart.map(item => {
     total += Number(item.price || 0);
-    return `
-      <div class="summary-row">
-        <span>${item.title}</span>
-        <strong>${money(item.price)}</strong>
-      </div>
-    `;
+    return `<div class="summary-row"><span>${item.title}</span><strong>${money(item.price)}</strong></div>`;
   }).join("");
 
   totalEl.textContent = money(total);
 }
 
-async function createOrderAndStartPayment() {
+function buildAndSubmitWompiForm(checkout) {
+  const form = document.createElement("form");
+  form.method = "GET";
+  form.action = checkout.checkoutUrl;
+
+  const fields = {
+    "public-key": checkout.publicKey,
+    currency: checkout.currency,
+    "amount-in-cents": checkout.amountInCents,
+    reference: checkout.reference,
+    "signature:integrity": checkout.integritySignature,
+    "redirect-url": checkout.redirectUrl,
+    "customer-data:email": checkout.customerEmail || "",
+    "customer-data:full-name": checkout.customerName || "Cliente Ding-Dong",
+    "customer-data:phone-number": checkout.customerPhone || ""
+  };
+
+  Object.entries(fields).forEach(([name, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = String(value);
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
+async function startWompiCheckout() {
   const user = await protectCheckout();
   const cart = getCart();
-
   if (!cart.length) {
     alert("No hay cursos en el carrito.");
     return;
   }
 
-  const phone = document.getElementById("nequi-phone").value.trim();
-  if (!/^3\d{9}$/.test(phone)) {
-    alert("Ingresa un número Nequi válido de 10 dígitos, por ejemplo 3001234567.");
+  const customerName = document.getElementById("customer-name").value.trim();
+  const customerPhone = document.getElementById("customer-phone").value.trim();
+  if (!customerName) {
+    alert("Escribe tu nombre completo.");
     return;
   }
 
   const button = document.getElementById("pay-btn");
   button.disabled = true;
-  button.textContent = "Creando orden...";
+  button.textContent = "Preparando checkout...";
 
   try {
     const token = await user.getIdToken();
-    const response = await fetch(`${functionsUrl}/api/createNequiCourseOrder`, {
+    const response = await fetch(`${functionsBaseUrl}/prepareWompiCheckout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
-        items: cart,
-        phoneNumber: phone
+        items: cart.map(item => item.id),
+        customerName,
+        customerPhone
       })
     });
 
     const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "No se pudo iniciar el pago.");
+    if (!response.ok || !data.ok) {
+      throw new Error(data.error || "No se pudo preparar el checkout de Wompi.");
     }
 
     localStorage.setItem("last_order_id", data.orderId);
-    document.getElementById("payment-status").innerHTML = `
-      <p>Orden creada: <strong>${data.orderId}</strong></p>
-      <p>Estado inicial: <strong>${data.status}</strong></p>
-      <p>Revisa tu app Nequi y confirma el pago.</p>
-    `;
-
-    button.textContent = "Verificar pago";
-    button.disabled = false;
-    button.onclick = verifyLastOrder;
+    buildAndSubmitWompiForm(data.checkout);
   } catch (error) {
+    console.error(error);
     alert(error.message);
     button.disabled = false;
-    button.textContent = "Pagar con Nequi";
-  }
-}
-
-async function verifyLastOrder() {
-  const orderId = localStorage.getItem("last_order_id");
-  if (!orderId) {
-    alert("No hay orden activa.");
-    return;
-  }
-
-  const user = auth.currentUser;
-  const token = await user.getIdToken();
-  const button = document.getElementById("pay-btn");
-  button.disabled = true;
-  button.textContent = "Verificando...";
-
-  try {
-    const response = await fetch(`${functionsUrl}/api/verifyNequiCourseOrder`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ orderId })
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "No se pudo verificar la orden.");
-    }
-
-    document.getElementById("payment-status").innerHTML = `
-      <p>Estado actual: <strong>${data.status}</strong></p>
-      <p>${data.message}</p>
-    `;
-
-    if (data.status === "PAID") {
-      localStorage.removeItem(checkoutCartKey);
-      button.style.display = "none";
-      document.getElementById("go-courses-btn").style.display = "inline-block";
-    } else {
-      button.disabled = false;
-      button.textContent = "Verificar pago";
-    }
-  } catch (error) {
-    alert(error.message);
-    button.disabled = false;
-    button.textContent = "Verificar pago";
+    button.textContent = "Continuar a Wompi";
   }
 }
 
@@ -157,5 +128,4 @@ window.addEventListener("DOMContentLoaded", async () => {
   renderOrderSummary();
 });
 
-window.createOrderAndStartPayment = createOrderAndStartPayment;
-window.verifyLastOrder = verifyLastOrder;
+window.startWompiCheckout = startWompiCheckout;

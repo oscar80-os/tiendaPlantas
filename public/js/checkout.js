@@ -139,7 +139,7 @@ document.getElementById("pagarCurso").addEventListener("click", function () {
         currency: 'COP',
         amountInCents: precio * 100,
         reference: "curso_" + Date.now(),
-        publicKey: "TU_PUBLIC_KEY_WOMPI",
+        publicKey: "pub_test_sLku86QTMKflFC4LR8ENqHOrYM3hjUAA",
         redirectUrl: window.location.origin + "/cursos/resultado.html"
     });
 

@@ -85,7 +85,6 @@ async function registerUser() {
     clearMessage();
 
     const cred = await auth.createUserWithEmailAndPassword(email, password);
-
     await saveUserProfile(cred.user, name);
 
     showMessage("Cuenta creada correctamente. Redirigiendo...");
@@ -199,7 +198,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   auth.onAuthStateChanged((user) => {
     if (user) {
-      // Si ya inició sesión y entra otra vez al login, lo llevamos al catálogo
       window.location.href = "cursos.html";
     }
   });

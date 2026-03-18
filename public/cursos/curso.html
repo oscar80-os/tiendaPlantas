@@ -1,24 +1,193 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ver curso</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curso | Ding-Dong</title>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <style>body{font-family:Arial,sans-serif;background:#f6f8f6;margin:0}.wrap{max-width:1000px;margin:24px auto;padding:0 20px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.06)}video{width:100%;border-radius:12px;background:#000}</style>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7f5;
+      color: #1f2937;
+    }
+
+    header {
+      background: #ffffff;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      padding: 18px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #2e7d32;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #455a64;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #c62828;
+      color: white;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 30px auto;
+      padding: 0 20px 40px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.07);
+      margin-bottom: 24px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .hero img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 16px;
+      background: #eef2f0;
+    }
+
+    .hero h2 {
+      margin-top: 0;
+      font-size: 32px;
+      color: #1f2937;
+    }
+
+    .hero p {
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .meta {
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .video-wrap {
+      margin-top: 14px;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 16px;
+      background: #000;
+      max-height: 650px;
+    }
+
+    .materials {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero img {
+        height: 240px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <p><a href="mis-cursos.html">← Volver a mis cursos</a></p>
-      <h1 id="course-title">Cargando...</h1>
-      <p id="course-description"></p>
-      <video id="course-video" controls controlsList="nodownload"></video>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <h1>Área del curso</h1>
+        <p id="user-email">Cargando usuario...</p>
+      </div>
+
+      <div class="actions">
+        <a href="mis-cursos.html" class="btn btn-secondary">Mis cursos</a>
+        <a href="cursos.html" class="btn btn-secondary">Catálogo</a>
+        <button id="logout-btn" class="btn btn-danger">Cerrar sesión</button>
+      </div>
     </div>
-  </div>
+  </header>
+
+  <main class="container">
+    <section id="course-content">
+      <div class="card">
+        <div class="empty-state">
+          <h2>Cargando curso...</h2>
+          <p>Espera un momento mientras verificamos tu acceso.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/firebase-config.js"></script>
   <script src="../js/course-view.js"></script>
 </body>
 </html>

@@ -1,39 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo de cursos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo de cursos | Ding-Dong</title>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <style>body{font-family:Arial,sans-serif;margin:0;background:#f6f8f6}header{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06)}main{display:grid;grid-template-columns:2fr 1fr;gap:24px;padding:24px;max-width:1280px;margin:auto}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}.course-card,.cart-box{background:#fff;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);overflow:hidden}.course-card img{width:100%;height:180px;object-fit:cover}.course-body{padding:16px}.course-body button,.checkout-btn,.logout-btn,.link-btn{padding:10px 14px;border:none;border-radius:10px;background:#2e7d32;color:#fff;cursor:pointer;text-decoration:none;display:inline-block}.cart-box{padding:18px}.cart-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #eee}@media(max-width:900px){main{grid-template-columns:1fr}}</style>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7f5;
+      color: #1f2937;
+    }
+
+    header {
+      background: #ffffff;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      padding: 18px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #2e7d32;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #455a64;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #c62828;
+      color: white;
+    }
+
+    .cart-badge {
+      background: #111827;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 30px auto;
+      padding: 0 20px 40px;
+    }
+
+    .intro {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+      margin-bottom: 28px;
+    }
+
+    .intro h2 {
+      margin-top: 0;
+      color: #1f2937;
+    }
+
+    #courses-list {
+      min-height: 120px;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <div>
-      <strong>Catálogo de cursos</strong>
-      <div id="user-email"></div>
-    </div>
-    <div>
-      <a class="link-btn" href="mis-cursos.html">Mis cursos</a>
-      <button class="logout-btn" onclick="logout()">Salir</button>
+    <div class="topbar">
+      <div class="brand">
+        <h1>Ding-Dong Cursos</h1>
+        <p>Aprende con nuestros cursos y accede desde tu cuenta.</p>
+      </div>
+
+      <div class="actions">
+        <span class="cart-badge">Carrito: <span id="cart-count">0</span></span>
+        <button id="preview-cart" class="btn btn-secondary">Ver carrito</button>
+        <button id="clear-cart" class="btn btn-secondary">Vaciar carrito</button>
+        <button id="go-checkout" class="btn btn-primary">Ir al checkout</button>
+        <a href="mis-cursos.html" class="btn btn-secondary">Mis cursos</a>
+        <button id="logout-btn" class="btn btn-danger">Cerrar sesión</button>
+      </div>
     </div>
   </header>
-  <main>
-    <section>
-      <div id="courses-grid" class="grid"></div>
+
+  <main class="container">
+    <section class="intro">
+      <h2>Catálogo</h2>
+      <p>Selecciona el curso que deseas comprar. Puedes agregar varios al carrito o comprar uno directamente.</p>
     </section>
-    <aside class="cart-box">
-      <h3>Carrito <span id="mini-cart-count">0</span></h3>
-      <div id="mini-cart"></div>
-      <p>Total: <strong id="mini-cart-total">$0</strong></p>
-      <button class="checkout-btn" onclick="goCheckout()">Pagar con Wompi</button>
-      <p style="font-size:14px;color:#666;">Dentro de Wompi tus clientes pueden pagar con Nequi y otros medios habilitados en tu cuenta.</p>
-    </aside>
+
+    <section id="courses-list"></section>
   </main>
-  <script src="../js/auth.js"></script>
+
+  <script src="../js/firebase-config.js"></script>
   <script src="../js/courses.js"></script>
 </body>
 </html>

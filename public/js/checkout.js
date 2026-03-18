@@ -53,7 +53,7 @@ function renderOrderSummary() {
     total += price;
 
     return `
-      <div class="summary-row" style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #eee;">
+      <div class="summary-row">
         <span>${item.title || "Curso"}</span>
         <strong>${money(price)}</strong>
       </div>
@@ -63,28 +63,8 @@ function renderOrderSummary() {
   totalEl.textContent = money(total);
 }
 
-async function activatePurchasedCourses(user, cart, transactionId) {
-  const batch = db.batch();
-
-  cart.forEach((item) => {
-    const ref = db.collection("inscripciones").doc();
-
-    batch.set(ref, {
-      usuarioId: user.uid,
-      usuarioEmail: user.email || "",
-      cursoId: item.id,
-      tituloCurso: item.title || "",
-      estado: "activo",
-      transactionId: transactionId || "",
-      fechaCompra: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  });
-
-  await batch.commit();
-}
-
 async function startWompiCheckout() {
-  const user = await protectCheckout();
+  await protectCheckout();
   const cart = getCart();
 
   if (!cart.length) {
@@ -119,42 +99,17 @@ async function startWompiCheckout() {
   try {
     const reference = "curso_" + Date.now();
 
+    localStorage.setItem("wompi_reference", reference);
+
     const checkout = new WidgetCheckout({
       currency: "COP",
       amountInCents: total * 100,
       reference: reference,
-      publicKey: "pub_test_sLku86QTMKflFC4LR8ENqHOrYM3hjUAA",
+      publicKey: "TU_PUBLIC_KEY_WOMPI",
       redirectUrl: window.location.origin + "/cursos/resultado.html"
     });
 
-    checkout.open(async function (result) {
-      console.log("Respuesta Wompi:", result);
-
-      const status = result?.transaction?.status;
-      const transactionId = result?.transaction?.id || "";
-
-      if (status === "APPROVED") {
-        try {
-          await activatePurchasedCourses(user, cart, transactionId);
-          clearCart();
-          window.location.href = "/cursos/mis-cursos.html";
-        } catch (error) {
-          console.error("Error activando cursos:", error);
-          alert("El pago fue aprobado, pero ocurrió un error activando tus cursos.");
-        }
-      } else if (status === "DECLINED") {
-        alert("El pago fue rechazado.");
-      } else if (status === "ERROR") {
-        alert("Ocurrió un error en el pago.");
-      } else {
-        alert("El pago no fue completado.");
-      }
-
-      if (payBtn) {
-        payBtn.disabled = false;
-        payBtn.textContent = "Continuar a Wompi";
-      }
-    });
+    checkout.open(function () {});
   } catch (error) {
     console.error("Error iniciando checkout:", error);
     alert("No se pudo abrir Wompi.");

@@ -1,34 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout Wompi</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | Ding-Dong</title>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <style>body{font-family:Arial,sans-serif;background:#f6f8f6;margin:0}.wrap{max-width:900px;margin:30px auto;padding:0 20px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.06)}input,button{padding:12px;border-radius:10px;border:1px solid #ddd;width:100%;margin-top:10px}button{border:none;background:#2e7d32;color:#fff;cursor:pointer}.summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}.secondary{display:inline-block;width:auto;text-decoration:none}</style>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7f5;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.07);
+    }
+
+    h1, h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #455a64;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Checkout de cursos</h1>
-      <p>Prepararemos tu orden y te enviaremos a Wompi. Allí el cliente podrá pagar con los métodos disponibles, incluido Nequi si está habilitado en tu comercio.</p>
-      <label>Nombre completo</label>
-      <input id="customer-name" placeholder="Nombre del comprador">
-      <label>Celular</label>
-      <input id="customer-phone" placeholder="3001234567" maxlength="10">
-      <h3>Resumen</h3>
-      <div id="order-summary"></div>
-      <p>Total: <strong id="checkout-total">$0</strong></p>
-      <button id="pay-btn" onclick="startWompiCheckout()">Continuar a Wompi</button>
-      <p style="font-size:14px;color:#666;">Importante: la activación del curso se hace por webhook. La redirección de Wompi es solo informativa.</p>
+  <main class="container">
+    <div class="grid">
+      <section class="card">
+        <h1>Finaliza tu compra</h1>
+        <p>Completa tus datos y continúa con Wompi.</p>
+
+        <label for="customer-name">Nombre completo</label>
+        <input id="customer-name" type="text" placeholder="Tu nombre completo" />
+
+        <label for="customer-phone">Celular</label>
+        <input id="customer-phone" type="tel" placeholder="Tu número de celular" />
+
+        <button id="pay-btn" class="btn btn-primary">Continuar a Wompi</button>
+        <a href="cursos.html" class="btn btn-secondary">Volver al catálogo</a>
+
+        <p class="note">
+          El pago se abrirá en la pasarela de Wompi. Al finalizar, regresarás automáticamente a la página de resultado.
+        </p>
+      </section>
+
+      <aside class="card">
+        <h2>Resumen del pedido</h2>
+        <div id="order-summary"></div>
+
+        <div class="total">
+          <span>Total</span>
+          <span id="checkout-total">$0</span>
+        </div>
+      </aside>
     </div>
-  </div>
-   <script src="https://checkout.wompi.co/widget.js"></script>
+  </main>
+
+  <script src="https://checkout.wompi.co/widget.js"></script>
+  <script src="../js/firebase-config.js"></script>
   <script src="../js/checkout.js"></script>
-  
 </body>
 </html>
-

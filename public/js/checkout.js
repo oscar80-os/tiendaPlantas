@@ -105,7 +105,7 @@ async function startWompiCheckout() {
       currency: "COP",
       amountInCents: total * 100,
       reference: reference,
-      publicKey: "TU_PUBLIC_KEY_WOMPI",
+      publicKey: "pub_test_sLku86QTMKflFC4LR8ENqHOrYM3hjUAA",
       redirectUrl: window.location.origin + "/cursos/resultado.html"
     });
 

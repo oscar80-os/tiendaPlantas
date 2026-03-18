@@ -5,3 +5,8 @@ firebase login
 firebase deploy
 
 tienda ding-dong
+
+
+comando firebase
+
+firebase deploy --only hosting,firestore

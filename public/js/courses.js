@@ -124,6 +124,7 @@ async function renderCourses() {
         thumbnailUrl: data.miniatura || data.thumbnailUrl || "",
         videoUrl: data.videoUrl || "",
         materialUrl: data.materialUrl || "",
+        wompiLink: data.wompiLink || "",
         activo: data.activo === true
       });
     });
@@ -154,7 +155,8 @@ function addCourseToCart(course) {
     id: course.id,
     title: course.title,
     price: Number(course.price || 0),
-    thumbnailUrl: course.thumbnailUrl || ""
+    thumbnailUrl: course.thumbnailUrl || "",
+    wompiLink: course.wompiLink || ""
   });
 
   saveCart(cart);
@@ -162,7 +164,26 @@ function addCourseToCart(course) {
 }
 
 function goToCheckout() {
-  window.location.href = "checkout.html";
+  const cart = getCart();
+
+  if (!cart.length) {
+    alert("No hay cursos en el carrito.");
+    return;
+  }
+
+  if (cart.length > 1) {
+    alert("En esta versión con Spark se recomienda vender un curso por pago. Usa 'Comprar ahora' en cada curso.");
+    return;
+  }
+
+  const course = cart[0];
+
+  if (!course.wompiLink) {
+    alert("Este curso no tiene link de pago configurado.");
+    return;
+  }
+
+  window.open(course.wompiLink, "_blank");
 }
 
 function bindCourseButtons(courses) {
@@ -191,16 +212,18 @@ function bindCourseButtons(courses) {
       const course = courses.find((item) => item.id === courseId);
       if (!course) return;
 
-      const cart = [{
+      if (!course.wompiLink) {
+        alert("Este curso todavía no tiene link de pago configurado.");
+        return;
+      }
+
+      localStorage.setItem("ultimoCursoSeleccionado", JSON.stringify({
         id: course.id,
         title: course.title,
-        price: Number(course.price || 0),
-        thumbnailUrl: course.thumbnailUrl || ""
-      }];
+        price: course.price
+      }));
 
-      saveCart(cart);
-      updateCartCount();
-      goToCheckout();
+      window.open(course.wompiLink, "_blank");
     });
   });
 }
@@ -216,7 +239,7 @@ function openCartPreview() {
   const resumen = cart.map((item) => `• ${item.title} - ${money(item.price)}`).join("\n");
   const total = cart.reduce((sum, item) => sum + Number(item.price || 0), 0);
 
-  alert(`${resumen}\n\nTotal: ${money(total)}`);
+  alert(`${resumen}\n\nTotal: ${money(total)}\n\nPara pagar en Spark, usa un solo curso por compra o el botón 'Comprar ahora'.`);
 }
 
 function clearCoursesCart() {

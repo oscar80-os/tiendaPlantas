@@ -66,7 +66,8 @@ function getCreateFormData() {
     precio: Number($("precio")?.value || 0),
     miniatura: $("miniatura")?.value.trim() || "",
     videoUrl: $("videoUrl")?.value.trim() || "",
-    materialUrl: $("materialUrl")?.value.trim() || ""
+    materialUrl: $("materialUrl")?.value.trim() || "",
+    wompiLink: $("wompiLink")?.value.trim() || ""
   };
 }
 
@@ -79,7 +80,8 @@ function getEditFormData() {
     precio: Number($("edit-precio")?.value || 0),
     miniatura: $("edit-miniatura")?.value.trim() || "",
     videoUrl: $("edit-videoUrl")?.value.trim() || "",
-    materialUrl: $("edit-materialUrl")?.value.trim() || ""
+    materialUrl: $("edit-materialUrl")?.value.trim() || "",
+    wompiLink: $("edit-wompiLink")?.value.trim() || ""
   };
 }
 
@@ -91,14 +93,23 @@ function validateCourseData(data) {
   if (!data.miniatura) return "La miniatura es obligatoria.";
   if (!data.videoUrl) return "El video URL es obligatorio.";
   if (!data.materialUrl) return "El material URL es obligatorio.";
+  if (!data.wompiLink) return "El Wompi Link es obligatorio.";
   return "";
 }
 
 function clearCreateForm() {
-  ["titulo", "descripcion", "descripcionLarga", "precio", "miniatura", "videoUrl", "materialUrl"]
-    .forEach((id) => {
-      if ($(id)) $(id).value = "";
-    });
+  [
+    "titulo",
+    "descripcion",
+    "descripcionLarga",
+    "precio",
+    "miniatura",
+    "videoUrl",
+    "materialUrl",
+    "wompiLink"
+  ].forEach((id) => {
+    if ($(id)) $(id).value = "";
+  });
 }
 
 function clearEditForm() {
@@ -110,7 +121,8 @@ function clearEditForm() {
     "edit-precio",
     "edit-miniatura",
     "edit-videoUrl",
-    "edit-materialUrl"
+    "edit-materialUrl",
+    "edit-wompiLink"
   ].forEach((id) => {
     if ($(id)) $(id).value = "";
   });
@@ -142,6 +154,7 @@ async function createCourse() {
       miniatura: data.miniatura,
       videoUrl: data.videoUrl,
       materialUrl: data.materialUrl,
+      wompiLink: data.wompiLink,
       activo: true,
       fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
       fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
@@ -191,7 +204,8 @@ async function updateCourse() {
       precio: data.precio,
       miniatura: data.miniatura,
       videoUrl: data.videoUrl,
-      materialUrl: data.materialUrl
+      materialUrl: data.materialUrl,
+      wompiLink: data.wompiLink
     });
 
     showMessage("edit-message", "Curso actualizado correctamente.");
@@ -230,6 +244,7 @@ function fillEditForm(courseId, data) {
   $("edit-miniatura").value = data.miniatura || "";
   $("edit-videoUrl").value = data.videoUrl || "";
   $("edit-materialUrl").value = data.materialUrl || "";
+  $("edit-wompiLink").value = data.wompiLink || "";
   clearMessage("edit-message");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -274,6 +289,7 @@ async function loadCoursesAdmin() {
             <p><strong>Precio:</strong> $${Number(data.precio || 0).toLocaleString("es-CO")}</p>
             <p><strong>Fecha creación:</strong> ${formatDate(data.fechaCreacion)}</p>
             <p><strong>Fecha registro:</strong> ${formatDate(data.fechaRegistro)}</p>
+            <p><strong>Wompi:</strong> ${data.wompiLink ? "Configurado" : "No configurado"}</p>
           </div>
           <div class="course-actions">
             <button class="btn btn-primary" onclick='editCourse("${doc.id}")'>Editar</button>

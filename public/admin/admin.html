@@ -179,12 +179,20 @@
       margin: 0;
       color: #6b7280;
       font-size: 14px;
+      line-height: 1.4;
     }
 
     .course-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+    }
+
+    .small-note {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: -8px;
+      margin-bottom: 14px;
     }
 
     @media (max-width: 900px) {
@@ -239,10 +247,14 @@
         <input id="miniatura" type="text" placeholder="https://..." />
 
         <label for="videoUrl">Video URL</label>
-        <input id="videoUrl" type="text" placeholder="https://..." />
+        <input id="videoUrl" type="text" placeholder="https://youtube.com/... o https://..." />
 
         <label for="materialUrl">Material URL</label>
         <input id="materialUrl" type="text" placeholder="https://..." />
+
+        <label for="wompiLink">Wompi Link</label>
+        <input id="wompiLink" type="text" placeholder="https://checkout.wompi.co/l/..." />
+        <p class="small-note">Pega aquí el link de pago real generado en Wompi para este curso.</p>
 
         <button id="save-btn" class="btn btn-primary" type="button">Guardar curso</button>
 
@@ -270,10 +282,13 @@
         <input id="edit-miniatura" type="text" placeholder="https://..." />
 
         <label for="edit-videoUrl">Video URL</label>
-        <input id="edit-videoUrl" type="text" placeholder="https://..." />
+        <input id="edit-videoUrl" type="text" placeholder="https://youtube.com/... o https://..." />
 
         <label for="edit-materialUrl">Material URL</label>
         <input id="edit-materialUrl" type="text" placeholder="https://..." />
+
+        <label for="edit-wompiLink">Wompi Link</label>
+        <input id="edit-wompiLink" type="text" placeholder="https://checkout.wompi.co/l/..." />
 
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button id="update-btn" class="btn btn-primary" type="button">Actualizar curso</button>

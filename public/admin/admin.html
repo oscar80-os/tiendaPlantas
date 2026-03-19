@@ -1,8 +1,296 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin cursos</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="../js/firebase-config.js"></script>
-<style>body{font-family:Arial,sans-serif;background:#f6f8f6;margin:0}.wrap{max-width:1100px;margin:24px auto;padding:0 20px}.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.06);margin-bottom:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-top:10px}button{padding:10px 14px;border:none;border-radius:10px;background:#2e7d32;color:#fff;cursor:pointer;margin-top:10px}.row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #eee}@media(max-width:900px){.grid{grid-template-columns:1fr}}</style></head>
-<body><div class="wrap" id="admin-app"><div class="card"><h1>Administrador de cursos</h1><p>Solo usuarios con <code>rol: admin</code> en Firestore pueden usar esta pantalla.</p><button onclick="adminLogout()">Cerrar sesión</button></div><div class="grid"><div class="card"><h2>Nuevo curso</h2><form id="course-form" onsubmit="event.preventDefault(); saveCourse();"><input id="title" placeholder="Título"><textarea id="shortDescription" placeholder="Descripción corta"></textarea><textarea id="longDescription" placeholder="Descripción completa"></textarea><input id="thumbnailUrl" placeholder="URL miniatura"><input id="videoUrl" placeholder="URL del video"><input id="price" type="number" placeholder="Precio en COP"><label><input id="activo" type="checkbox" checked> Activo</label><button type="submit">Guardar curso</button></form></div><div class="card"><h2>Cursos cargados</h2><div id="courses-list"></div></div></div></div><script src="../js/admin.js"></script></body></html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Administrativo | Ding-Dong</title>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7f5;
+      color: #1f2937;
+    }
+
+    header {
+      background: #ffffff;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      padding: 18px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #2e7d32;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #455a64;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #c62828;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.07);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #374151;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .message {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.success {
+      display: block;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .message.error {
+      display: block;
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .course-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .course-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .course-item img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eef2f0;
+    }
+
+    .course-item h4 {
+      margin: 0 0 6px;
+    }
+
+    .course-item p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .course-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .course-item {
+        grid-template-columns: 1fr;
+      }
+
+      .course-item img {
+        width: 100%;
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <h1>Panel Administrativo</h1>
+        <p id="admin-user">Validando acceso...</p>
+      </div>
+
+      <div class="actions">
+        <a href="/cursos/cursos.html" class="btn btn-secondary">Ver catálogo</a>
+        <button id="logout-btn" class="btn btn-danger">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card">
+        <h2>Crear curso</h2>
+
+        <label for="titulo">Título</label>
+        <input id="titulo" type="text" placeholder="Ej. Curso de bisutería" />
+
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" placeholder="Descripción corta del curso"></textarea>
+
+        <label for="descripcionLarga">Descripción larga</label>
+        <textarea id="descripcionLarga" placeholder="Contenido completo del curso"></textarea>
+
+        <label for="precio">Precio</label>
+        <input id="precio" type="number" min="0" placeholder="Ej. 120000" />
+
+        <label for="miniatura">Miniatura (URL)</label>
+        <input id="miniatura" type="text" placeholder="https://..." />
+
+        <label for="videoUrl">Video URL</label>
+        <input id="videoUrl" type="text" placeholder="https://..." />
+
+        <label for="materialUrl">Material URL</label>
+        <input id="materialUrl" type="text" placeholder="https://..." />
+
+        <button id="save-btn" class="btn btn-primary" type="button">Guardar curso</button>
+
+        <div id="form-message" class="message"></div>
+      </section>
+
+      <section class="card">
+        <h2>Editar curso</h2>
+
+        <input id="edit-id" type="hidden" />
+
+        <label for="edit-titulo">Título</label>
+        <input id="edit-titulo" type="text" placeholder="Ej. Curso de bisutería" />
+
+        <label for="edit-descripcion">Descripción</label>
+        <textarea id="edit-descripcion" placeholder="Descripción corta del curso"></textarea>
+
+        <label for="edit-descripcionLarga">Descripción larga</label>
+        <textarea id="edit-descripcionLarga" placeholder="Contenido completo del curso"></textarea>
+
+        <label for="edit-precio">Precio</label>
+        <input id="edit-precio" type="number" min="0" placeholder="Ej. 120000" />
+
+        <label for="edit-miniatura">Miniatura (URL)</label>
+        <input id="edit-miniatura" type="text" placeholder="https://..." />
+
+        <label for="edit-videoUrl">Video URL</label>
+        <input id="edit-videoUrl" type="text" placeholder="https://..." />
+
+        <label for="edit-materialUrl">Material URL</label>
+        <input id="edit-materialUrl" type="text" placeholder="https://..." />
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button id="update-btn" class="btn btn-primary" type="button">Actualizar curso</button>
+          <button id="cancel-edit-btn" class="btn btn-secondary" type="button">Cancelar</button>
+        </div>
+
+        <div id="edit-message" class="message"></div>
+      </section>
+
+      <section class="card full">
+        <h3>Catálogo administrable</h3>
+        <div id="courses-admin-list" class="course-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

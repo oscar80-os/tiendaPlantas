@@ -129,7 +129,7 @@ function renderCourse(user, courseId, courseData, enrollmentData) {
 async function validateEnrollment(user, courseId) {
   const snap = await db
     .collection("inscripciones")
-    .where("usuarioId", "==", user.uid)
+    .where("userId", "==", user.uid)
     .where("cursoId", "==", courseId)
     .where("estado", "==", "activo")
     .limit(1)

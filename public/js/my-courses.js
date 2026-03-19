@@ -78,7 +78,7 @@ async function loadMyCourses() {
   try {
     const inscripcionesSnap = await db
       .collection("inscripciones")
-      .where("usuarioId", "==", user.uid)
+      .where("userId", "==", user.uid)
       .where("estado", "==", "activo")
       .get();
 

@@ -65,7 +65,7 @@ async function waitForUser() {
 async function courseAlreadyAssigned(userId, courseId) {
   const snap = await db
     .collection("inscripciones")
-    .where("usuarioId", "==", userId)
+    .where("userId", "==", userId)
     .where("cursoId", "==", courseId)
     .where("estado", "==", "activo")
     .limit(1)
@@ -93,8 +93,8 @@ async function activateCoursesFromCart(user, transactionId, reference) {
     }
 
     await db.collection("inscripciones").add({
-      usuarioId: user.uid,
-      usuarioEmail: user.email || "",
+      userId: user.uid,
+      userEmail: user.email || "",
       cursoId: item.id,
       tituloCurso: item.title || "",
       estado: "activo",

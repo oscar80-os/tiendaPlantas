@@ -1,15 +1,17 @@
+const pendingOrderKey = "dingdong_pending_order";
 const checkoutCartKey = "dingdong_course_cart";
 
-function getCart() {
+function getPendingOrder() {
   try {
-    return JSON.parse(localStorage.getItem(checkoutCartKey)) || [];
+    return JSON.parse(localStorage.getItem(pendingOrderKey)) || null;
   } catch (error) {
-    console.error("Error leyendo carrito:", error);
-    return [];
+    console.error("Error leyendo orden pendiente:", error);
+    return null;
   }
 }
 
-function clearCart() {
+function clearPendingOrder() {
+  localStorage.removeItem(pendingOrderKey);
   localStorage.removeItem(checkoutCartKey);
   localStorage.removeItem("wompi_reference");
 }
@@ -47,6 +49,7 @@ function fillDetails({ reference, transactionId, status }) {
 
 function getQueryParams() {
   const params = new URLSearchParams(window.location.search);
+
   return {
     id: params.get("id") || params.get("transaction_id") || "",
     status: (params.get("status") || "").toUpperCase(),
@@ -74,40 +77,54 @@ async function courseAlreadyAssigned(userId, courseId) {
   return !snap.empty;
 }
 
-async function activateCoursesFromCart(user, transactionId, reference) {
-  const cart = getCart();
+async function markOrderApproved(orderId, transactionId, reference) {
+  if (!orderId) return;
 
-  if (!cart.length) {
-    return { activated: 0, skipped: 0 };
+  try {
+    await db.collection("ordenes").doc(orderId).update({
+      estado: "aprobado",
+      transactionId: transactionId || "",
+      referenciaPago: reference || "",
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Error actualizando orden:", error);
+  }
+}
+
+async function activateCourseFromPendingOrder(user, transactionId, reference) {
+  const pendingOrder = getPendingOrder();
+
+  if (!pendingOrder || !pendingOrder.cursoId) {
+    return {
+      ok: false,
+      reason: "missing_pending_order"
+    };
   }
 
-  let activated = 0;
-  let skipped = 0;
+  const exists = await courseAlreadyAssigned(user.uid, pendingOrder.cursoId);
 
-  for (const item of cart) {
-    const exists = await courseAlreadyAssigned(user.uid, item.id);
-
-    if (exists) {
-      skipped++;
-      continue;
-    }
-
+  if (!exists) {
     await db.collection("inscripciones").add({
       userId: user.uid,
-      userEmail: user.email || "",
-      cursoId: item.id,
-      tituloCurso: item.title || "",
+      userEmail: user.email || pendingOrder.userEmail || "",
+      cursoId: pendingOrder.cursoId,
+      tituloCurso: pendingOrder.tituloCurso || "",
       estado: "activo",
       referenciaPago: reference || "",
       transactionId: transactionId || "",
+      origen: "retorno_wompi",
       fechaCompra: firebase.firestore.FieldValue.serverTimestamp()
     });
-
-    activated++;
   }
 
-  clearCart();
-  return { activated, skipped };
+  await markOrderApproved(pendingOrder.orderId, transactionId, reference);
+  clearPendingOrder();
+
+  return {
+    ok: true,
+    alreadyActive: exists
+  };
 }
 
 async function processResult() {
@@ -125,43 +142,48 @@ async function processResult() {
     setStatus(
       "pending",
       "Inicia sesión para ver tu compra",
-      "Necesitas entrar con tu cuenta para asociar tus cursos comprados."
+      "Debes entrar con la misma cuenta con la que realizaste la compra para activar el curso."
     );
     return;
   }
 
   if (status === "APPROVED") {
     try {
-      const result = await activateCoursesFromCart(user, id, reference);
+      const result = await activateCourseFromPendingOrder(user, id, reference);
 
-      if (result.activated > 0) {
+      if (!result.ok && result.reason === "missing_pending_order") {
         setStatus(
-          "success",
-          "¡Pago aprobado!",
-          "Tus cursos fueron activados correctamente y ya están disponibles en tu cuenta."
+          "pending",
+          "Pago aprobado, validación pendiente",
+          "El pago parece aprobado, pero no encontramos la orden local para activar el curso automáticamente."
         );
-      } else if (result.skipped > 0) {
+        return;
+      }
+
+      if (result.alreadyActive) {
         setStatus(
           "success",
           "Pago aprobado",
-          "La compra ya había sido registrada anteriormente. Tus cursos siguen activos."
+          "Tu curso ya estaba activo previamente. Puedes entrar ahora a Mis cursos."
         );
       } else {
         setStatus(
           "success",
-          "Pago aprobado",
-          "El pago fue aprobado. Verifica tus cursos en el panel."
+          "¡Pago aprobado!",
+          "Tu curso fue activado correctamente y ya está disponible en tu cuenta."
         );
       }
+
+      return;
     } catch (error) {
-      console.error("Error activando cursos:", error);
+      console.error("Error activando curso:", error);
       setStatus(
         "error",
         "Pago aprobado, pero hubo un problema",
-        "Recibimos la aprobación del pago, pero no pudimos activar los cursos automáticamente."
+        "Recibimos la aprobación del pago, pero no pudimos activar el curso automáticamente."
       );
+      return;
     }
-    return;
   }
 
   if (status === "DECLINED") {
@@ -177,7 +199,7 @@ async function processResult() {
     setStatus(
       "pending",
       "Pago pendiente",
-      "Tu transacción está en proceso. Cuando se confirme, podrás acceder a tus cursos."
+      "Tu transacción está en proceso. Cuando se confirme, podrás acceder a tu curso."
     );
     return;
   }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,25 +8,26 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" href="img/logoPesta#U00f1a.png" type="image/png">
+    <link rel="icon" href="img/logoPestana.png" type="image/png">
 </head>
+
 <body>
     <!-- Header -->
     <header>
         <nav class="navbar">
             <div class="logo">
-            <a href="/">
-                <img src="img/logoSinFondo1.png">
-                <h1></h1>
-            </a>
-        </div>
-           <div class="nav-links">
-            <a href="#productos">Plantas</a>
-            <a href="#productos">Materas</a>
-            <a href="#productos">Madera</a>
-            <a href="#productos">Forja</a>
-            <a href="#productos">Cursos</a>
-        </div>
+                <a href="/">
+                    <img src="img/logoSinFondo1.png">
+                    <h1></h1>
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="#productos">Plantas</a>
+                <a href="#productos">Materas</a>
+                <a href="#productos">Madera</a>
+                <a href="#productos">Forja</a>
+                <a href="#productos">Cursos</a>
+            </div>
             <div style="display: flex; align-items: center; gap: 15px;">
                 <!-- Redes sociales en header -->
                 <div class="social-header">
@@ -56,17 +58,21 @@
         </div>
     </section>
 
-   <a href="./cursos/login.html" class="btn-primary" style="display:inline-block;margin:16px 24px;">Mis Cursos</a>
+    <!--BOTÓN MIS CURSOS-->
+
+    <a href="./cursos/login.html" class="btn-cursos">Mis Cursos</a>
+   
+
     <!-- Productos -->
     <section id="productos" class="products">
         <h2>Nuestros Productos</h2>
-        
+
         <!-- Barra de búsqueda -->
         <div class="search-container">
             <input type="text" id="search-input" placeholder="Buscar productos..." class="search-input">
             <i class="fas fa-search search-icon"></i>
         </div>
-        
+
         <div class="filters">
             <button class="filter-btn active" onclick="filterProducts('todos')">Todos</button>
             <button class="filter-btn" onclick="filterProducts('plantas')">Plantas</button>
@@ -98,12 +104,6 @@
 
 
 
-
-
-
-
-
-
     <!-- Modal de métodos de pago -->
     <div id="payment-modal" class="payment-modal">
         <div class="payment-modal-content">
@@ -111,15 +111,18 @@
             <h3>Selecciona tu método de pago</h3>
             <div class="payment-options">
                 <div class="payment-option" onclick="selectPayment('nequi')">
-                    <img src="https://logodownload.org/wp-content/uploads/2021/06/nequi-logo.png" alt="Nequi" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span style=&quot;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;&quot;>Nequi</span>')">
+                    <img src="https://logodownload.org/wp-content/uploads/2021/06/nequi-logo.png" alt="Nequi"
+                        onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span style=&quot;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;&quot;>Nequi</span>')">
                     <span>Nequi</span>
                 </div>
                 <div class="payment-option" onclick="selectPayment('daviplata')">
-                    <img src="https://logodownload.org/wp-content/uploads/2021/10/daviplata-logo.png" alt="Daviplata" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span style=&quot;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;&quot;>Daviplata</span>')">
+                    <img src="https://logodownload.org/wp-content/uploads/2021/10/daviplata-logo.png" alt="Daviplata"
+                        onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span style=&quot;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;&quot;>Daviplata</span>')">
                     <span>Daviplata</span>
                 </div>
                 <div class="payment-option" onclick="selectPayment('dale')">
-                    <img src="https://logodownload.org/wp-content/uploads/2022/02/dale-logo.png" alt="Dale" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span style=&quot;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;&quot;>Dale</span>')">
+                    <img src="https://logodownload.org/wp-content/uploads/2022/02/dale-logo.png" alt="Dale"
+                        onerror="this.style.display='none'; this.insertAdjacentHTML('afterend','<span style=&quot;padding:8px 12px;border:1px solid #ddd;border-radius:8px;background:#fff;&quot;>Dale</span>')">
                     <span>Dale</span>
                 </div>
                 <div class="payment-option" onclick="selectPayment('tarjeta')">
@@ -127,10 +130,12 @@
                     <span>Tarjeta de crédito/débito</span>
                 </div>
             </div>
-            <div id="payment-instructions" style="display: none; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+            <div id="payment-instructions"
+                style="display: none; margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
                 <p id="instruction-text"></p>
             </div>
-            <button id="confirm-payment-btn" class="btn-primary" style="display: none; margin-top: 15px;" onclick="confirmPayment()">Confirmar y enviar a WhatsApp</button>
+            <button id="confirm-payment-btn" class="btn-primary" style="display: none; margin-top: 15px;"
+                onclick="confirmPayment()">Confirmar y enviar a WhatsApp</button>
         </div>
     </div>
 
@@ -143,13 +148,16 @@
                 <p><i class="fab fa-whatsapp"></i> WhatsApp: +57 313 625 4423</p>
                 <p><i class="fas fa-map-marker-alt"></i> Bogotá, Colombia</p>
                 <div style="display: flex; gap: 20px; margin-top: 20px;">
-                    <a href="https://www.instagram.com/tiendadingdong2026/" target="_blank" style="color: #2e7d32; font-size: 2rem;">
+                    <a href="https://www.instagram.com/tiendadingdong2026/" target="_blank"
+                        style="color: #2e7d32; font-size: 2rem;">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://www.tiktok.com/@dingdong_tienda" target="_blank" style="color: #2e7d32; font-size: 2rem;">
+                    <a href="https://www.tiktok.com/@dingdong_tienda" target="_blank"
+                        style="color: #2e7d32; font-size: 2rem;">
                         <i class="fab fa-tiktok"></i>
                     </a>
-                    <a href="https://web.facebook.com/media/set/?vanity=61583915504502&set=a.122102964189130516&locale=es_LA" target="_blank" style="color: #2e7d32; font-size: 2rem;">
+                    <a href="https://web.facebook.com/media/set/?vanity=61583915504502&set=a.122102964189130516&locale=es_LA"
+                        target="_blank" style="color: #2e7d32; font-size: 2rem;">
                         <i class="fab fa-facebook"></i>
                     </a>
                     <a href="https://wa.me/573136254423" target="_blank" style="color: #2e7d32; font-size: 2rem;">
@@ -163,80 +171,64 @@
     <!-- Botones sociales flotantes (WhatsApp separado + menú unificado) -->
     <div class="social-buttons-container">
         <!-- Botón de WhatsApp (siempre visible) -->
-        <a href="https://wa.me/573136254423?text=Hola%20Ding-Dong,%20¡Quiero%20el%20curso%20gratis%20que%20me%20prometiste!" 
-           class="whatsapp-float" 
-           target="_blank"
-           onclick="trackSocialClick('WhatsApp')">
+        <a href="https://wa.me/573136254423?text=Hola%20Ding-Dong,%20¡Quiero%20el%20curso%20gratis%20que%20me%20prometiste!"
+            class="whatsapp-float" target="_blank" onclick="trackSocialClick('WhatsApp')">
             <i class="fab fa-whatsapp"></i>
             <span class="tooltip">Escribe</span>
         </a>
-        
+
         <!-- Botón de redes sociales (menú desplegable) -->
         <div class="social-dropdown">
             <button class="social-main-btn" onclick="toggleSocialMenu()" id="socialMainBtn">
                 <i class="fas fa-share-alt"></i>
                 <span class="tooltip">Más redes</span>
             </button>
-            
+
             <div class="social-menu" id="socialMenu">
-                <a href="https://www.instagram.com/tiendadingdong2026/" 
-                   class="social-menu-item instagram" 
-                   target="_blank"
-                   onclick="trackSocialClick('Instagram')">
+                <a href="https://www.instagram.com/tiendadingdong2026/" class="social-menu-item instagram"
+                    target="_blank" onclick="trackSocialClick('Instagram')">
                     <i class="fab fa-instagram"></i>
                     <span>Instagram</span>
                     <i class="fas fa-external-link-alt" style="font-size: 12px; opacity: 0.5;"></i>
                 </a>
-                
-                <a href="https://www.tiktok.com/@dingdong_tienda" 
-                   class="social-menu-item tiktok" 
-                   target="_blank"
-                   onclick="trackSocialClick('TikTok')">
+
+                <a href="https://www.tiktok.com/@dingdong_tienda" class="social-menu-item tiktok" target="_blank"
+                    onclick="trackSocialClick('TikTok')">
                     <i class="fab fa-tiktok"></i>
                     <span>TikTok</span>
                     <i class="fas fa-external-link-alt" style="font-size: 12px; opacity: 0.5;"></i>
                 </a>
-                
-                <a href="https://web.facebook.com/media/set/?vanity=61583915504502&set=a.122102964189130516&locale=es_LA" 
-                   class="social-menu-item facebook" 
-                   target="_blank"
-                   onclick="trackSocialClick('Facebook')">
+
+                <a href="https://web.facebook.com/media/set/?vanity=61583915504502&set=a.122102964189130516&locale=es_LA"
+                    class="social-menu-item facebook" target="_blank" onclick="trackSocialClick('Facebook')">
                     <i class="fab fa-facebook-f"></i>
                     <span>Facebook</span>
                     <i class="fas fa-external-link-alt" style="font-size: 12px; opacity: 0.5;"></i>
                 </a>
-                
-                <a href="https://co.pinterest.com/tiendadingdong2026/" 
-                   class="social-menu-item pinterest" 
-                   target="_blank"
-                   onclick="trackSocialClick('Pinterest')">
+
+                <a href="https://co.pinterest.com/tiendadingdong2026/" class="social-menu-item pinterest"
+                    target="_blank" onclick="trackSocialClick('Pinterest')">
                     <i class="fab fa-pinterest"></i>
                     <span>Pinterest</span>
                     <i class="fas fa-external-link-alt" style="font-size: 12px; opacity: 0.5;"></i>
                 </a>
-                
-                <a href="https://www.youtube.com/channel/UCCoJ6Q5YzdZ2L4xsWarzkyg" 
-                   class="social-menu-item youtube" 
-                   target="_blank"
-                   onclick="trackSocialClick('YouTube')">
+
+                <a href="https://www.youtube.com/channel/UCCoJ6Q5YzdZ2L4xsWarzkyg" class="social-menu-item youtube"
+                    target="_blank" onclick="trackSocialClick('YouTube')">
                     <i class="fab fa-youtube"></i>
                     <span>YouTube</span>
                     <i class="fas fa-external-link-alt" style="font-size: 12px; opacity: 0.5;"></i>
                 </a>
-                
-                <a href="https://x.com/oscargalin89026" 
-                   class="social-menu-item twitter" 
-                   target="_blank"
-                   onclick="trackSocialClick('Twitter')">
+
+                <a href="https://x.com/oscargalin89026" class="social-menu-item twitter" target="_blank"
+                    onclick="trackSocialClick('Twitter')">
                     <i class="fab fa-twitter"></i>
                     <span>Twitter/X</span>
                     <i class="fas fa-external-link-alt" style="font-size: 12px; opacity: 0.5;"></i>
                 </a>
-                
-                <a href="https://www.linkedin.com/in/oscar-galindo-9972853b7/" 
-                   class="social-menu-item linkedin" 
-                   target="_blank"
-                   onclick="trackSocialClick('LinkedIn')">
+
+                <a href="https://www.linkedin.com/in/oscar-galindo-9972853b7/" class="social-menu-item linkedin"
+                    target="_blank" onclick="trackSocialClick('LinkedIn')">
                     <i class="fab fa-linkedin"></i>
                     <span>LinkedIn</span>
                     <i class="fas fa-external-link-alt" style="font-size: 12px; opacity: 0.5;"></i>
@@ -257,7 +249,8 @@
             <a href="https://www.tiktok.com/@dingdong_tienda" target="_blank" title="TikTok">
                 <i class="fab fa-tiktok"></i>
             </a>
-            <a href="https://web.facebook.com/media/set/?vanity=61583915504502&set=a.122102964189130516&locale=es_LA" target="_blank" title="Facebook">
+            <a href="https://web.facebook.com/media/set/?vanity=61583915504502&set=a.122102964189130516&locale=es_LA"
+                target="_blank" title="Facebook">
                 <i class="fab fa-facebook"></i>
             </a>
             <a href="https://co.pinterest.com/tiendadingdong2026/" target="_blank" title="Pinterest">
@@ -272,7 +265,7 @@
         </div>
         <p>&copy; 2026 Ding-Dong ¡El arte de regalar!</p>
         <p style="font-size: 14px; margin-top: 10px;">
-            <i class="fas fa-phone"></i> +57 313 625 4423 | 
+            <i class="fas fa-phone"></i> +57 313 625 4423 |
             <i class="fab fa-whatsapp"></i> WhatsApp: +57 313 625 4423
         </p>
     </footer>
@@ -280,4 +273,5 @@
     <!-- Scripts -->
     <script src="js/app.js"></script>
 </body>
+
 </html>

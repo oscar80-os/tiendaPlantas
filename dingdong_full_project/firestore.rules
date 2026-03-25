@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() &&
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    match /usuarios/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow update: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow delete: if false;
+    }
+
+    match /cursos/{cursoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      match /modulos/{moduloId} {
+        allow read: if true;
+        allow write: if isAdmin();
+
+        match /lecciones/{leccionId} {
+          allow read: if true;
+          allow write: if isAdmin();
+        }
+      }
+    }
+
+    match /ordenes/{orderId} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == resource.data.userId);
+      allow create: if signedIn()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.userEmail == request.auth.token.email
+        && request.resource.data.estado == "pendiente";
+      allow update, delete: if false;
+    }
+
+    match /inscripciones/{inscripcionId} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == resource.data.userId);
+      allow write: if false;
+    }
+
+    match /progreso/{userId} {
+      allow read, write: if (signedIn() && request.auth.uid == userId) || isAdmin();
+      match /cursos/{cursoId} {
+        allow read, write: if (signedIn() && request.auth.uid == userId) || isAdmin();
+      }
+    }
+
+    match /certificados/{certId} {
+      allow read, write: if signedIn() || isAdmin();
+    }
+
+    match /contactos/{contactoId} {
+      allow create: if true;
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /agenda_comercial/{agendaId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /cotizaciones/{cotizacionId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /automatizaciones_comerciales/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /ajustes/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /testimonios/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /faq/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /banners/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /blog/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /promociones/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

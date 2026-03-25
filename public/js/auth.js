@@ -54,13 +54,28 @@ function validateEmail(email) {
   return /\S+@\S+\.\S+/.test(email);
 }
 
-async function saveUserProfile(user, name) {
-  await db.collection("usuarios").doc(user.uid).set({
+async function ensureUserProfile(user, name = "") {
+  if (!user) return;
+
+  const ref = db.collection("usuarios").doc(user.uid);
+  const doc = await ref.get();
+
+  const baseData = {
     uid: user.uid,
-    nombre: name || "",
+    nombre: name || doc.data()?.nombre || "",
     email: (user.email || "").toLowerCase(),
-    fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    rol: doc.exists ? (doc.data().rol || "cliente") : "cliente"
+  };
+
+  if (!doc.exists) {
+    await ref.set({
+      ...baseData,
+      fechaRegistro: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    return;
+  }
+
+  await ref.set(baseData, { merge: true });
 }
 
 async function registerUser() {
@@ -85,7 +100,7 @@ async function registerUser() {
     clearMessage();
 
     const cred = await auth.createUserWithEmailAndPassword(email, password);
-    await saveUserProfile(cred.user, name);
+    await ensureUserProfile(cred.user, name);
 
     showMessage("Cuenta creada correctamente. Redirigiendo...");
     setTimeout(() => {
@@ -113,7 +128,8 @@ async function loginUser() {
   try {
     clearMessage();
 
-    await auth.signInWithEmailAndPassword(email, password);
+    const cred = await auth.signInWithEmailAndPassword(email, password);
+    await ensureUserProfile(cred.user);
 
     showMessage("Ingreso correcto. Redirigiendo...");
     setTimeout(() => {
@@ -196,8 +212,13 @@ window.addEventListener("DOMContentLoaded", () => {
   bindEvents();
   setMode("login");
 
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(async (user) => {
     if (user) {
+      try {
+        await ensureUserProfile(user);
+      } catch (error) {
+        console.error("No se pudo asegurar perfil de usuario:", error);
+      }
       window.location.href = "cursos.html";
     }
   });

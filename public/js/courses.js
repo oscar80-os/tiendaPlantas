@@ -1,4 +1,5 @@
 const coursesCartKey = "dingdong_course_cart";
+const pendingOrderKey = "dingdong_pending_order";
 
 function money(value) {
   return new Intl.NumberFormat("es-CO", {
@@ -19,6 +20,18 @@ function getCart() {
 
 function saveCart(cart) {
   localStorage.setItem(coursesCartKey, JSON.stringify(cart));
+}
+
+function clearCart() {
+  localStorage.removeItem(coursesCartKey);
+}
+
+function setPendingOrder(data) {
+  localStorage.setItem(pendingOrderKey, JSON.stringify(data));
+}
+
+function clearPendingOrder() {
+  localStorage.removeItem(pendingOrderKey);
 }
 
 function isInCart(courseId) {
@@ -163,7 +176,39 @@ function addCourseToCart(course) {
   updateCartCount();
 }
 
-function goToCheckout() {
+async function createPendingOrder(user, course) {
+  const now = firebase.firestore.FieldValue.serverTimestamp();
+
+  const orderData = {
+    userId: user.uid,
+    userEmail: user.email || "",
+    cursoId: course.id,
+    tituloCurso: course.title || "",
+    monto: Number(course.price || 0),
+    wompiLink: course.wompiLink || "",
+    proveedor: "wompi_link",
+    estado: "pendiente",
+    fechaCreacion: now,
+    fechaActualizacion: now
+  };
+
+  const docRef = await db.collection("ordenes").add(orderData);
+
+  const localData = {
+    orderId: docRef.id,
+    userId: user.uid,
+    userEmail: user.email || "",
+    cursoId: course.id,
+    tituloCurso: course.title || "",
+    monto: Number(course.price || 0)
+  };
+
+  setPendingOrder(localData);
+  return docRef.id;
+}
+
+async function goToCheckout() {
+  const user = await requireAuth();
   const cart = getCart();
 
   if (!cart.length) {
@@ -183,7 +228,13 @@ function goToCheckout() {
     return;
   }
 
-  window.open(course.wompiLink, "_blank");
+  try {
+    await createPendingOrder(user, course);
+    window.location.href = course.wompiLink;
+  } catch (error) {
+    console.error("Error creando orden pendiente:", error);
+    alert("No se pudo preparar la compra. Intenta nuevamente.");
+  }
 }
 
 function bindCourseButtons(courses) {
@@ -207,7 +258,8 @@ function bindCourseButtons(courses) {
   });
 
   buyButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
+      const user = await requireAuth();
       const courseId = button.dataset.courseId;
       const course = courses.find((item) => item.id === courseId);
       if (!course) return;
@@ -217,13 +269,22 @@ function bindCourseButtons(courses) {
         return;
       }
 
-      localStorage.setItem("ultimoCursoSeleccionado", JSON.stringify({
-        id: course.id,
-        title: course.title,
-        price: course.price
-      }));
+      try {
+        saveCart([{
+          id: course.id,
+          title: course.title,
+          price: Number(course.price || 0),
+          thumbnailUrl: course.thumbnailUrl || "",
+          wompiLink: course.wompiLink || ""
+        }]);
 
-      window.open(course.wompiLink, "_blank");
+        updateCartCount();
+        await createPendingOrder(user, course);
+        window.location.href = course.wompiLink;
+      } catch (error) {
+        console.error("Error preparando compra:", error);
+        alert("No se pudo preparar la compra. Intenta nuevamente.");
+      }
     });
   });
 }
@@ -243,7 +304,8 @@ function openCartPreview() {
 }
 
 function clearCoursesCart() {
-  localStorage.removeItem(coursesCartKey);
+  clearCart();
+  clearPendingOrder();
   updateCartCount();
   alert("Carrito vaciado.");
   window.location.reload();

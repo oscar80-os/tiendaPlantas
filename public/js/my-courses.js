@@ -28,11 +28,17 @@ function formatDate(value) {
 }
 
 function buildCourseCard(courseId, courseData, enrollmentData) {
-  const title = courseData?.titulo || courseData?.title || enrollmentData?.tituloCurso || "Curso";
+  const title =
+    courseData?.titulo ||
+    courseData?.title ||
+    enrollmentData?.tituloCurso ||
+    "Curso";
+
   const description =
     courseData?.descripcion ||
     courseData?.shortDescription ||
     "Ya puedes ingresar a este curso desde tu cuenta.";
+
   const thumbnail =
     courseData?.miniatura ||
     courseData?.thumbnailUrl ||
@@ -136,7 +142,9 @@ async function loadMyCourses() {
     }
 
     const html = Array.from(courseMap.entries())
-      .map(([cursoId, data]) => buildCourseCard(cursoId, data.courseData, data.enrollmentData))
+      .map(([cursoId, data]) =>
+        buildCourseCard(cursoId, data.courseData, data.enrollmentData)
+      )
       .join("");
 
     container.innerHTML = `

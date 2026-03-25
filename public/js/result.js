@@ -80,28 +80,15 @@ async function courseAlreadyAssigned(userId, courseId) {
 async function markOrderApproved(orderId, transactionId, reference) {
   if (!orderId) return;
 
-  try {
-    await db.collection("ordenes").doc(orderId).update({
-      estado: "aprobado",
-      transactionId: transactionId || "",
-      referenciaPago: reference || "",
-      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  } catch (error) {
-    console.error("Error actualizando orden:", error);
-  }
+  await db.collection("ordenes").doc(orderId).update({
+    estado: "aprobado",
+    transactionId: transactionId || "",
+    referenciaPago: reference || "",
+    fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+  });
 }
 
-async function activateCourseFromPendingOrder(user, transactionId, reference) {
-  const pendingOrder = getPendingOrder();
-
-  if (!pendingOrder || !pendingOrder.cursoId) {
-    return {
-      ok: false,
-      reason: "missing_pending_order"
-    };
-  }
-
+async function activateCourse(user, pendingOrder, transactionId, reference) {
   const exists = await courseAlreadyAssigned(user.uid, pendingOrder.cursoId);
 
   if (!exists) {
@@ -121,14 +108,12 @@ async function activateCourseFromPendingOrder(user, transactionId, reference) {
   await markOrderApproved(pendingOrder.orderId, transactionId, reference);
   clearPendingOrder();
 
-  return {
-    ok: true,
-    alreadyActive: exists
-  };
+  return { alreadyActive: exists };
 }
 
 async function processResult() {
   const { id, status, reference } = getQueryParams();
+  const pendingOrder = getPendingOrder();
 
   fillDetails({
     reference,
@@ -147,18 +132,19 @@ async function processResult() {
     return;
   }
 
+  if (!pendingOrder || !pendingOrder.cursoId) {
+    setStatus(
+      "pending",
+      "No encontramos una orden pendiente",
+      "Si ya pagaste, revisa Mis cursos o contáctanos para validarlo manualmente."
+    );
+    return;
+  }
+
+  // Caso ideal: viene aprobado en la URL
   if (status === "APPROVED") {
     try {
-      const result = await activateCourseFromPendingOrder(user, id, reference);
-
-      if (!result.ok && result.reason === "missing_pending_order") {
-        setStatus(
-          "pending",
-          "Pago aprobado, validación pendiente",
-          "El pago parece aprobado, pero no encontramos la orden local para activar el curso automáticamente."
-        );
-        return;
-      }
+      const result = await activateCourse(user, pendingOrder, id, reference);
 
       if (result.alreadyActive) {
         setStatus(
@@ -173,7 +159,6 @@ async function processResult() {
           "Tu curso fue activado correctamente y ya está disponible en tu cuenta."
         );
       }
-
       return;
     } catch (error) {
       console.error("Error activando curso:", error);
@@ -181,6 +166,36 @@ async function processResult() {
         "error",
         "Pago aprobado, pero hubo un problema",
         "Recibimos la aprobación del pago, pero no pudimos activar el curso automáticamente."
+      );
+      return;
+    }
+  }
+
+  // Caso práctico para Spark: si volvió del checkout y existe orden pendiente, activamos
+  if (!status) {
+    try {
+      const result = await activateCourse(user, pendingOrder, id, reference);
+
+      if (result.alreadyActive) {
+        setStatus(
+          "success",
+          "Compra registrada",
+          "Tu curso ya estaba activo. Puedes entrar ahora a Mis cursos."
+        );
+      } else {
+        setStatus(
+          "success",
+          "¡Curso activado!",
+          "Tu compra fue registrada y tu curso ya está disponible en tu cuenta."
+        );
+      }
+      return;
+    } catch (error) {
+      console.error("Error activando curso sin status:", error);
+      setStatus(
+        "error",
+        "No pudimos confirmar el pago automáticamente",
+        "La orden existe, pero no fue posible activar el curso desde esta pantalla."
       );
       return;
     }

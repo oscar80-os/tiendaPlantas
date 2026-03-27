@@ -1,8 +1,8 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // 🔐 FUNCIONES
     function signedIn() {
       return request.auth != null;
     }
@@ -12,6 +12,7 @@ service cloud.firestore {
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
     }
 
+    // 👤 USUARIOS
     match /usuarios/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow create: if signedIn() && request.auth.uid == uid;
@@ -19,11 +20,13 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // 📚 CURSOS
     match /cursos/{cursoId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
+    // 💳 ORDENES (ANTES DEL PAGO)
     match /ordenes/{orderId} {
       allow read: if isAdmin() || (signedIn() && request.auth.uid == resource.data.userId);
 
@@ -39,60 +42,79 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // 🎓 INSCRIPCIONES (DESPUÉS DEL PAGO)
     match /inscripciones/{inscripcionId} {
       allow read: if isAdmin() || (signedIn() && request.auth.uid == resource.data.userId);
-      allow write: if false;
+
+      allow create: if signedIn()
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.userId is string
+        && request.resource.data.cursoId is string
+        && request.resource.data.estado == "activo";
+
+      allow update, delete: if false;
     }
 
+    // 📩 LEADS
     match /leads/{leadId} {
       allow create: if true;
       allow read, update: if isAdmin();
       allow delete: if false;
     }
 
+    // 📞 CONTACTOS
     match /contactos/{contactoId} {
       allow create: if true;
       allow read, update: if isAdmin();
       allow delete: if false;
     }
 
+    // 📅 AGENDA COMERCIAL
     match /agenda_comercial/{agendaId} {
       allow read, write: if isAdmin();
     }
 
+    // 📊 COTIZACIONES
     match /cotizaciones/{cotizacionId} {
       allow read, write: if isAdmin();
     }
 
+    // 🤖 AUTOMATIZACIONES
     match /automatizaciones_comerciales/{docId} {
       allow read, write: if isAdmin();
     }
 
+    // ❓ FAQ
     match /faq/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
+    // ⭐ TESTIMONIOS
     match /testimonios/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
+    // 🎯 PROMOCIONES
     match /promociones/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
+    // 📰 BLOG
     match /blog/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
+    // 🎨 BANNERS
     match /banners/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
+    // ⚙️ AJUSTES
     match /ajustes/{docId} {
       allow read: if true;
       allow write: if isAdmin();

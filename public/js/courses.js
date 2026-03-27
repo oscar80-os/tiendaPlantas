@@ -42,9 +42,7 @@ function isInCart(courseId) {
 function updateCartCount() {
   const cart = getCart();
   const badge = document.getElementById("cart-count");
-  if (badge) {
-    badge.textContent = cart.length;
-  }
+  if (badge) badge.textContent = cart.length;
 }
 
 async function requireAuth() {
@@ -128,6 +126,7 @@ async function renderCourses() {
 
     snapshot.forEach((doc) => {
       const data = doc.data();
+
       courses.push({
         id: doc.id,
         title: data.titulo || data.title || "",
@@ -150,9 +149,10 @@ async function renderCourses() {
 
     bindCourseButtons(courses);
     updateCartCount();
+
   } catch (error) {
     console.error("Error cargando cursos:", error);
-    container.innerHTML = "<p>Error cargando los cursos. Intenta nuevamente.</p>";
+    container.innerHTML = "<p>Error cargando los cursos.</p>";
   }
 }
 
@@ -204,37 +204,8 @@ async function createPendingOrder(user, course) {
   };
 
   setPendingOrder(localData);
+
   return docRef.id;
-}
-
-async function goToCheckout() {
-  const user = await requireAuth();
-  const cart = getCart();
-
-  if (!cart.length) {
-    alert("No hay cursos en el carrito.");
-    return;
-  }
-
-  if (cart.length > 1) {
-    alert("En esta versión con Spark se recomienda vender un curso por pago. Usa 'Comprar ahora' en cada curso.");
-    return;
-  }
-
-  const course = cart[0];
-
-  if (!course.wompiLink) {
-    alert("Este curso no tiene link de pago configurado.");
-    return;
-  }
-
-  try {
-    await createPendingOrder(user, course);
-    window.location.href = course.wompiLink;
-  } catch (error) {
-    console.error("Error creando orden pendiente:", error);
-    alert("No se pudo preparar la compra. Intenta nuevamente.");
-  }
 }
 
 function bindCourseButtons(courses) {
@@ -243,8 +214,7 @@ function bindCourseButtons(courses) {
 
   addButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const courseId = button.dataset.courseId;
-      const course = courses.find((item) => item.id === courseId);
+      const course = courses.find(c => c.id === button.dataset.courseId);
       if (!course) return;
 
       addCourseToCart(course);
@@ -252,63 +222,36 @@ function bindCourseButtons(courses) {
       button.disabled = true;
       button.textContent = "Agregado";
       button.style.background = "#9ca3af";
-
-      alert("Curso agregado al carrito.");
     });
   });
 
   buyButtons.forEach((button) => {
     button.addEventListener("click", async () => {
       const user = await requireAuth();
-      const courseId = button.dataset.courseId;
-      const course = courses.find((item) => item.id === courseId);
+      const course = courses.find(c => c.id === button.dataset.courseId);
       if (!course) return;
 
       if (!course.wompiLink) {
-        alert("Este curso todavía no tiene link de pago configurado.");
+        alert("Curso sin link de pago.");
         return;
       }
 
       try {
-        saveCart([{
-          id: course.id,
-          title: course.title,
-          price: Number(course.price || 0),
-          thumbnailUrl: course.thumbnailUrl || "",
-          wompiLink: course.wompiLink || ""
-        }]);
+        // guardar carrito de 1 curso
+        saveCart([course]);
 
-        updateCartCount();
+        // crear orden en Firestore
         await createPendingOrder(user, course);
+
+        // redirigir a Wompi (MISMA PESTAÑA)
         window.location.href = course.wompiLink;
+
       } catch (error) {
         console.error("Error preparando compra:", error);
-        alert("No se pudo preparar la compra. Intenta nuevamente.");
+        alert("No se pudo preparar la compra.");
       }
     });
   });
-}
-
-function openCartPreview() {
-  const cart = getCart();
-
-  if (!cart.length) {
-    alert("No hay cursos en el carrito.");
-    return;
-  }
-
-  const resumen = cart.map((item) => `• ${item.title} - ${money(item.price)}`).join("\n");
-  const total = cart.reduce((sum, item) => sum + Number(item.price || 0), 0);
-
-  alert(`${resumen}\n\nTotal: ${money(total)}\n\nPara pagar en Spark, usa un solo curso por compra o el botón 'Comprar ahora'.`);
-}
-
-function clearCoursesCart() {
-  clearCart();
-  clearPendingOrder();
-  updateCartCount();
-  alert("Carrito vaciado.");
-  window.location.reload();
 }
 
 async function logout() {
@@ -316,8 +259,8 @@ async function logout() {
     await auth.signOut();
     window.location.href = "login.html";
   } catch (error) {
-    console.error("Error cerrando sesión:", error);
-    alert("No se pudo cerrar sesión.");
+    console.error(error);
+    alert("Error cerrando sesión.");
   }
 }
 
@@ -325,20 +268,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   updateCartCount();
   await renderCourses();
 
-  const goCheckoutBtn = document.getElementById("go-checkout");
-  if (goCheckoutBtn) goCheckoutBtn.addEventListener("click", goToCheckout);
-
-  const previewCartBtn = document.getElementById("preview-cart");
-  if (previewCartBtn) previewCartBtn.addEventListener("click", openCartPreview);
-
-  const clearCartBtn = document.getElementById("clear-cart");
-  if (clearCartBtn) clearCartBtn.addEventListener("click", clearCoursesCart);
-
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) logoutBtn.addEventListener("click", logout);
 });
 
-window.goToCheckout = goToCheckout;
-window.openCartPreview = openCartPreview;
-window.clearCoursesCart = clearCoursesCart;
 window.logout = logout;

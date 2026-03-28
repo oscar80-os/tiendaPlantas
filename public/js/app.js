@@ -8,9 +8,16 @@ function ensureFallbackProducts() {
     { id: "1", name: "Helecho Boston", description: "Planta de interior de fácil cuidado", price: 75000, category: "plantas", image: "./img/helechoboston.png" },
     { id: "2", name: "Matera Artesanal", description: "Matera de barro hecha a mano", price: 45000, category: "materas", image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400" },
     { id: "3", name: "Estante Flotante", description: "Estante de madera de pino", price: 85000, category: "madera", image: "./img/estanteflotante.png" },
-    { id: "16", name: "Curso cactus y suculentas", description: "Aprende todo sobre tus cactus y suculentas", price: 120000, category: "cursos", image: "./img/cursoCactus.png" },
-    { id: "17", name: "Curso Bonsái", description: "Aprende todo sobre el bonsái y sus cuidados", price: 150000, category: "cursos", image: "./img/cursoBonsai1.png" },
-    { id: "18", name: "Curso Plantas Exterior", description: "Aprende a plantar tu jardín", price: 120000, category: "cursos", image: "./img/cursoExterior.png" }
+    { id: "4", name: "Jarra ", description: "Pintada a mano unica y exclusiva", price: 55000, category: "materas", image: "./img/jarraPequeña.png" },
+    { id: "5", name: "Pesebres", description: "Jarones tipo pesebres", price: 49000, category: "materas", image: "./img/jarronesPesebre.png" },
+    { id: "6", name: "Arbol de tazas", description: "Tazas con soporte artesania unica", price: 65000, category: "materas", image: "./img/arbolTazas.png" },
+    { id: "7", name: "Arbol tazas", description: "Arbol tazas Ding-Dong, pintadas a mano", price: 68000, category: "materas", image: "./img/arbolTazazDing.png" },
+    { id: "8", name: "Cafetera", description: "Cafetera Ding-Dong", price: 45000, category: "materas", image: "./img/cafetera.png" },
+    { id: "9", name: "Matera", description: "Matera maripoza,en barro y pintada a mano", price: 49000, category: "materas", image: "./img/materaMaripoza.png" },
+    { id: "10", name: "Pocillo", description: "Pocillo Ding-Dong", price: 30000, category: "materas", image: "./img/taza.png" },
+    { id: "11", name: "Taza", description: "Taza Ding-Dong pintada a mano", price: 25000, category: "materas", image: "./img/tazasSinOrejas.png" },
+    { id: "12", name: "Azucareras", description: "Azucareras Ding-Dong pintada a mano", price: 25000, category: "materas", image: "./img/tazaTapa.png" }
+    
   ];
 }
 
@@ -55,6 +62,7 @@ function applyFiltersAndSearch() {
     else if (filterText === "madera") category = "madera";
     else if (filterText === "forja") category = "forja";
     else if (filterText === "cursos") category = "cursos";
+    else if (filterText === "cerería") category = "cerería";
   }
 
   let filtered = products;

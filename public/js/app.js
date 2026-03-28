@@ -9,7 +9,7 @@ function ensureFallbackProducts() {
     { id: "2", name: "Matera Artesanal", description: "Matera de barro hecha a mano", price: 45000, category: "materas", image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400" },
     { id: "3", name: "Estante Flotante", description: "Estante de madera de pino", price: 85000, category: "madera", image: "./img/estanteflotante.png" },
     { id: "4", name: "Jarra ", description: "Pintada a mano unica y exclusiva", price: 55000, category: "materas", image: "./img/jarraPequeña.png" },
-    { id: "5", name: "Pesebres", description: "Jarones tipo pesebres", price: 49000, category: "materas", image: "./img/jarronesPesebre.png" },
+    { id: "5", name: "Pesebres", description: "Jarrones tipo pesebre", price: 49000 , category: "materas", image: "./img/jarronesPesebre.png" },
     { id: "6", name: "Arbol de tazas", description: "Tazas con soporte artesania unica", price: 65000, category: "materas", image: "./img/arbolTazas.png" },
     { id: "7", name: "Arbol tazas", description: "Arbol tazas Ding-Dong, pintadas a mano", price: 68000, category: "materas", image: "./img/arbolTazazDing.png" },
     { id: "8", name: "Cafetera", description: "Cafetera Ding-Dong", price: 45000, category: "materas", image: "./img/cafetera.png" },

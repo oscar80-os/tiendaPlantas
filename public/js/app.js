@@ -16,8 +16,22 @@ function ensureFallbackProducts() {
     { id: "9", name: "Matera", description: "Matera maripoza,en barro y pintada a mano", price: 49000, category: "materas", image: "./img/materaMaripoza.png" },
     { id: "10", name: "Pocillo", description: "Pocillo Ding-Dong", price: 30000, category: "materas", image: "./img/taza.png" },
     { id: "11", name: "Taza", description: "Taza Ding-Dong pintada a mano", price: 25000, category: "materas", image: "./img/tazasSinOrejas.png" },
-    { id: "12", name: "Azucareras", description: "Azucareras Ding-Dong pintada a mano", price: 25000, category: "materas", image: "./img/tazaTapa.png" }
-    
+    { id: "12", name: "Azucareras", description: "Azucareras Ding-Dong pintada a mano", price: 25000, category: "materas", image: "./img/tazaTapa.png" },
+    { id: "13", name: "Arturio Rojo ", description: "Este Anturio Rojo requiere riego moderado y prefiere la semi luz. Es una planta con flor que alcanza una altura promedio de 50 cm y puede llegar hasta los 70 cm a los 2 años. Se recomienda fertilizar cada 15 días y no exponerla directamente al sol.", price: 45000, category: "plantas", image: "./img/anturioRojo.png" },
+    { id: "14", name: "Arbol de Jade", description: "Es ideal para quienes buscan una planta de bajo mantenimiento. Requiere riego escaso y prefiere la exposición directa al sol.  Su altura promedio es de 80 cm. Se recomienda plantarlo a una distancia de 50 cm.", price: 35000, category: "plantas", image: "./img/arbolJade.png" },
+    { id: "15", name: "Cinata", description: "Purificadora de aire: Es excelente para eliminar contaminantes del hogar como el monóxido de carbono y el formaldehído.", price: 48000, category: "plantas", image: "./img/cinta.png" },
+    { id: "16", name: "Cuerno de Alce", description: "Requiere luz brillante indirecta. Evita el sol directo, ya que sus hojas son muy sensibles y pueden quemarse fácilmente, apareciendo manchas negras o amarillentas.", price: 40000, category: "plantas", image: "./img/cuernoDeAlce.png" },
+    { id: "17", name: "Espatifilo", description: "Conocido también como cuna de Moisés o lirio de la paz, es una de las plantas de interior más completas: es elegante, purifica el aire y es sorprendentemente resistente. ", price: 55000, category: "plantas", image: "./img/espatifilo.png" },
+    { id: "18", name: "Jeranios Rojos", description: "Son los reyes de los balcones y terrazas gracias a su color vibrante y su resistencia extrema al sol. Simbolizan fuerza y protección, y son ideales para dar un toque mediterráneo a cualquier espacio exterior.", price: 65000, category: "plantas", image: "./img/geraniosRojos.png" },
+    { id: "19", name: "Planta de Jade", description: "También conocida como árbol de la abundancia o del dinero, es una de las suculentas más apreciadas en el mundo por su longevidad y su asociación con la prosperidad en el Feng Shui. ", price: 39000, category: "plantas", image: "./img/jade.png" },
+    { id: "20", name: "Lavanda ", description: "Planta aromática mediterránea sumamente valorada por su fragancia relajante, su color púrpura vibrante y su capacidad para atraer polinizadores como abejas y mariposas. Es una especie rústica que, aunque fácil de cuidar, requiere condiciones específicas de luz y drenaje para no morir", price: 45000, category: "plantas", image: "./img/lavanda.png" },
+    { id: "21", name: "Lengua de Suegra", description: "También conocida como planta de serpiente o espada de San Jorge, es probablemente la planta de interior más resistente que existe. Es la opción ideal para principiantes o personas con poco tiempo, ya que es casi indestructible.", price: 45000, category: "plantas", image: "./img/LenguaSuegra.png" },
+    { id: "22", name: "Costilla de Adán ", description: "Es una planta trepadora de la selva tropical que destaca por los agujeros naturales de sus hojas (fenestraciones), que permiten que la luz y el viento pasen a través de ellas sin romperlas.", price: 42000, category: "plantas", image: "./img/Monstera.png" },
+    { id: "23", name: "El Potos ", description: "Es la planta de interior por excelencia: es casi imposible de matar, crece rapidísimo y queda espectacular colgando de estantes o trepando por las paredes. ", price: 35000, category: "plantas", image: "./img/potos.png" },
+    { id: "24", name: "Suculentas ", description: "son plantas fascinantes que almacenan agua en sus hojas, tallos o raíces, lo que las hace extremadamente resistentes a la sequía. Son ideales para interiores y exteriores debido a su gran variedad de formas, colores y facilidad de mantenimiento.", price: 55000, category: "plantas", image: "./img/suculentas.png" },
+
+
+
   ];
 }
 

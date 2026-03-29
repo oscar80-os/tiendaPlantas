@@ -29,8 +29,15 @@ function ensureFallbackProducts() {
     { id: "22", name: "Costilla de Adán ", description: "Es una planta trepadora de la selva tropical que destaca por los agujeros naturales de sus hojas (fenestraciones), que permiten que la luz y el viento pasen a través de ellas sin romperlas.", price: 42000, category: "plantas", image: "./img/Monstera.png" },
     { id: "23", name: "El Potos ", description: "Es la planta de interior por excelencia: es casi imposible de matar, crece rapidísimo y queda espectacular colgando de estantes o trepando por las paredes. ", price: 35000, category: "plantas", image: "./img/potos.png" },
     { id: "24", name: "Suculentas ", description: "son plantas fascinantes que almacenan agua en sus hojas, tallos o raíces, lo que las hace extremadamente resistentes a la sequía. Son ideales para interiores y exteriores debido a su gran variedad de formas, colores y facilidad de mantenimiento.", price: 55000, category: "plantas", image: "./img/suculentas.png" },
-
-
+    { id: "25", name: "Soporte Pared ", description: "Elegante ,sutil el negro en la madera es perfecto para esa pared que quieres adornar ", price: 55000, category: "madera", image: "./img/dosNe.jpeg" },
+{ id: "26", name: "Esquinero ", description: "Del color que quieras , perfecto para darle tu toque a esos espacios especiales", price: 180000, category: "madera", image: "./img/esquineroB.jpeg" },
+{ id: "27", name: "Esquinero ", description: "Del color que quieras , perfecto para darle tu toque a esos espacios especiales", price: 180000, category: "madera", image: "./img/esquineroM.jpeg" },
+{ id: "28", name: "Esquinero ", description: "Cree un ambiente elegante y moderno en la sala de estar con un color de pintura negro nítido.", price: 180000, category: "madera", image: "./img/esquineroN.jpeg" },
+{ id: "29", name: "Butaco", description: "Pada dos materas, minimalista perfecto para cualquier espacio", price: 110000, category: "madera", image: "./img/soDos.jpeg" },
+{ id: "30", name: "Soporte ", description: "Para esas suculentas que tanto te gustan", price: 60000, category: "madera", image: "./img/soP.jpeg" },
+{ id: "31", name: "Soporte ", description: "Queda elegante para tu sala y balcon ", price: 75000, category: "madera", image: "./img/soUno.jpeg" },
+{ id: "32", name: "Bancos ", description: "Bancos para darle ese toque especial, en tu jardin", price: 125000, category: "madera", image: "./img/btres.jpeg" },
+{ id: "33", name: "Butaco ", description: "Esa matera que te gusta , espera este butaco. ¡Espectacular!.", price: 65000, category: "madera", image: "./img/soU.jpeg" },
 
   ];
 }

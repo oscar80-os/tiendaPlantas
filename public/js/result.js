@@ -1,6 +1,10 @@
 const pendingOrderKey = "dingdong_pending_order";
 const checkoutCartKey = "dingdong_course_cart";
 
+/* =========================
+   LOCAL STORAGE
+========================= */
+
 function getPendingOrder() {
   try {
     return JSON.parse(localStorage.getItem(pendingOrderKey)) || null;
@@ -13,8 +17,11 @@ function getPendingOrder() {
 function clearPendingOrder() {
   localStorage.removeItem(pendingOrderKey);
   localStorage.removeItem(checkoutCartKey);
-  localStorage.removeItem("wompi_reference");
 }
+
+/* =========================
+   UI
+========================= */
 
 function setStatus(type, title, message) {
   const icon = document.getElementById("status-icon");
@@ -47,6 +54,10 @@ function fillDetails({ reference, transactionId, status }) {
   box.style.display = "block";
 }
 
+/* =========================
+   URL PARAMS
+========================= */
+
 function getQueryParams() {
   const params = new URLSearchParams(window.location.search);
 
@@ -57,6 +68,10 @@ function getQueryParams() {
   };
 }
 
+/* =========================
+   AUTH
+========================= */
+
 async function waitForUser() {
   return new Promise((resolve) => {
     auth.onAuthStateChanged((user) => {
@@ -64,6 +79,10 @@ async function waitForUser() {
     });
   });
 }
+
+/* =========================
+   FIRESTORE
+========================= */
 
 async function courseAlreadyAssigned(userId, courseId) {
   const snap = await db
@@ -111,6 +130,10 @@ async function activateCourse(user, pendingOrder, transactionId, reference) {
   return { alreadyActive: exists };
 }
 
+/* =========================
+   MAIN
+========================= */
+
 async function processResult() {
   const { id, status, reference } = getQueryParams();
   const pendingOrder = getPendingOrder();
@@ -126,8 +149,8 @@ async function processResult() {
   if (!user) {
     setStatus(
       "pending",
-      "Inicia sesión para ver tu compra",
-      "Debes entrar con la misma cuenta con la que realizaste la compra para activar el curso."
+      "Inicia sesión",
+      "Debes iniciar sesión con la cuenta que realizó la compra."
     );
     return;
   }
@@ -135,104 +158,37 @@ async function processResult() {
   if (!pendingOrder || !pendingOrder.cursoId) {
     setStatus(
       "pending",
-      "No encontramos una orden pendiente",
-      "Si ya pagaste, revisa Mis cursos o contáctanos para validarlo manualmente."
+      "Orden no encontrada",
+      "No encontramos la compra en este dispositivo. Si ya pagaste, revisa 'Mis cursos'."
     );
     return;
   }
 
-  // Caso ideal: viene aprobado en la URL
-  if (status === "APPROVED") {
-    try {
-      const result = await activateCourse(user, pendingOrder, id, reference);
+  try {
+    const result = await activateCourse(user, pendingOrder, id, reference);
 
-      if (result.alreadyActive) {
-        setStatus(
-          "success",
-          "Pago aprobado",
-          "Tu curso ya estaba activo previamente. Puedes entrar ahora a Mis cursos."
-        );
-      } else {
-        setStatus(
-          "success",
-          "¡Pago aprobado!",
-          "Tu curso fue activado correctamente y ya está disponible en tu cuenta."
-        );
-      }
-      return;
-    } catch (error) {
-      console.error("Error activando curso:", error);
+    if (result.alreadyActive) {
       setStatus(
-        "error",
-        "Pago aprobado, pero hubo un problema",
-        "Recibimos la aprobación del pago, pero no pudimos activar el curso automáticamente."
+        "success",
+        "Curso ya activo",
+        "Este curso ya estaba activo en tu cuenta."
       );
-      return;
-    }
-  }
-
-  // Caso práctico para Spark: si volvió del checkout y existe orden pendiente, activamos
-  if (!status) {
-    try {
-      const result = await activateCourse(user, pendingOrder, id, reference);
-
-      if (result.alreadyActive) {
-        setStatus(
-          "success",
-          "Compra registrada",
-          "Tu curso ya estaba activo. Puedes entrar ahora a Mis cursos."
-        );
-      } else {
-        setStatus(
-          "success",
-          "¡Curso activado!",
-          "Tu compra fue registrada y tu curso ya está disponible en tu cuenta."
-        );
-      }
-      return;
-    } catch (error) {
-      console.error("Error activando curso sin status:", error);
+    } else {
       setStatus(
-        "error",
-        "No pudimos confirmar el pago automáticamente",
-        "La orden existe, pero no fue posible activar el curso desde esta pantalla."
+        "success",
+        "¡Curso activado!",
+        "Tu compra fue registrada y el curso ya está disponible."
       );
-      return;
     }
-  }
+  } catch (error) {
+    console.error("Error activando curso:", error);
 
-  if (status === "DECLINED") {
     setStatus(
       "error",
-      "Pago rechazado",
-      "Tu pago fue rechazado. Puedes intentarlo de nuevo con otro medio de pago."
+      "Error en activación",
+      "El pago puede estar aprobado, pero no pudimos activar el curso automáticamente."
     );
-    return;
   }
-
-  if (status === "PENDING") {
-    setStatus(
-      "pending",
-      "Pago pendiente",
-      "Tu transacción está en proceso. Cuando se confirme, podrás acceder a tu curso."
-    );
-    return;
-  }
-
-  if (status === "ERROR") {
-    setStatus(
-      "error",
-      "Error en el pago",
-      "Ocurrió un error durante el proceso de pago. Intenta nuevamente."
-    );
-    return;
-  }
-
-  setStatus(
-    "pending",
-    "Estado no confirmado",
-    "No pudimos confirmar el resultado del pago desde la URL de retorno."
-  );
 }
 
 window.addEventListener("DOMContentLoaded", processResult);

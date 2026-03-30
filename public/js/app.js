@@ -39,6 +39,14 @@ function ensureFallbackProducts() {
 { id: "32", name: "Bancos ", description: "Bancos para darle ese toque especial, en tu jardin", price: 125000, category: "madera", image: "./img/btres.jpeg" },
 { id: "33", name: "Butaco ", description: "Esa matera que te gusta , espera este butaco. ¡Espectacular!.", price: 65000, category: "madera", image: "./img/soU.jpeg" },
 
+{ id: "34", name: "Soporte de piso en metal", description: "Amarillo vibrante con un arco decorativo en la parte superior. Dispone de tres bases circulares a diferentes alturas y una repisa rectangular con varillas en la parte inferior, lo que permite organizar varias macetas en un espacio compacto.", price: 150000, category: "metal", image: "./img/a2.jpeg" },
+{ id: "35", name: "Base tipo mesa ", description: "Es una base de metal negro de estilo moderno de mediados de siglo. Cuenta con una estructura circular en la parte inferior para mayor estabilidad y cuatro patas delgadas que elevan la maceta a una altura de mesa.", price: 85000, category: "metal", image: "./img/b1.jpeg" },
+{ id: "36", name: "Esquinero rojo", description: "Presenta un estilo funcional y decorativo con un arco superior que le da un toque clásico. Las baldas tienen una forma de cuarto de círculo para encajar perfectamente en las esquinas.", price: 255000, category: "metal", image: "./img/e5.jpeg" },
+{ id: "37", name: "Soporte negro ", description: "¡Inperdible!, soporte para plantas de varios niveles con un diseño asimétrico y moderno, ideal para organizar macetas en espacios verticales.", price: 320000, category: "metal", image: "./img/e6.jpeg" },
+{ id: "38", name: "Soporte Pared ", description: "Es ideal para macetas pequeñas de entre 10 y 12 cm de diámetro. Al ser un diseño vertical, es perfecto para decorar paredes en espacios reducidos como pasillos, balcones o estudios.", price: 155000, category: "metal", image: "./img/n3.jpeg" },
+{ id: "39", name: "Base piso ", description: "Transforma cualquier rincón de tu hogar u oficina con este elegante soporte metálico de doble nivel. Diseñado para quienes buscan un toque de diseño contemporáneo y funcionalidad, este organizador eleva la belleza de tus plantas favoritas mientras ahorra espacio en tus superficies.", price: 155000, category: "metal", image: "./img/r2.jpeg" },
+{ id: "40", name: "Soporte Pared ¡Jardín Vertical! ", description: "Dale vida a tus paredes con este exclusivo estante metálico de 4 niveles. Diseñado para transformar espacios vacíos en oasis vibrantes, este soporte combina un diseño minimalista con la máxima eficiencia espacial, ideal para los amantes de la decoración botánica moderna.", price: 55000, category: "metal", image: "./img/v4.jpeg" },
+
   ];
 }
 
@@ -81,9 +89,9 @@ function applyFiltersAndSearch() {
     if (filterText === "plantas") category = "plantas";
     else if (filterText === "materas") category = "materas";
     else if (filterText === "madera") category = "madera";
-    else if (filterText === "forja") category = "forja";
+    else if (filterText === "metal") category = "metal";
     else if (filterText === "cursos") category = "cursos";
-    else if (filterText === "cerería") category = "cerería";
+    else if (filterText === "velas") category = "velas";
   }
 
   let filtered = products;

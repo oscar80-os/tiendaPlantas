@@ -3,71 +3,113 @@ let products = [];
 let searchTerm = "";
 let selectedPayment = null;
 
+const STORE_CART_KEY = "dingdong_store_cart";
+
 function ensureFallbackProducts() {
   return [
     { id: "1", name: "Helecho Boston", description: "Planta de interior de fácil cuidado", price: 75000, category: "plantas", image: "./img/helechoboston.png" },
     { id: "2", name: "Matera Artesanal", description: "Matera de barro hecha a mano", price: 45000, category: "materas", image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400" },
     { id: "3", name: "Estante Flotante", description: "Estante de madera de pino", price: 85000, category: "madera", image: "./img/estanteflotante.png" },
-    { id: "4", name: "Jarra ", description: "Pintada a mano unica y exclusiva", price: 55000, category: "materas", image: "./img/jarraPequeña.png" },
-    { id: "5", name: "Pesebres", description: "Jarrones tipo pesebre", price: 49000 , category: "materas", image: "./img/jarronesPesebre.png" },
-    { id: "6", name: "Arbol de tazas", description: "Tazas con soporte artesania unica", price: 65000, category: "materas", image: "./img/arbolTazas.png" },
+    { id: "4", name: "Jarra", description: "Pintada a mano única y exclusiva", price: 55000, category: "materas", image: "./img/jarraPequeña.png" },
+    { id: "5", name: "Pesebres", description: "Jarrones tipo pesebre", price: 49000, category: "materas", image: "./img/jarronesPesebre.png" },
+    { id: "6", name: "Arbol de tazas", description: "Tazas con soporte, artesanía única", price: 65000, category: "materas", image: "./img/arbolTazas.png" },
     { id: "7", name: "Arbol tazas", description: "Arbol tazas Ding-Dong, pintadas a mano", price: 68000, category: "materas", image: "./img/arbolTazazDing.png" },
     { id: "8", name: "Cafetera", description: "Cafetera Ding-Dong", price: 45000, category: "materas", image: "./img/cafetera.png" },
-    { id: "9", name: "Matera", description: "Matera maripoza,en barro y pintada a mano", price: 49000, category: "materas", image: "./img/materaMaripoza.png" },
+    { id: "9", name: "Matera", description: "Matera mariposa, en barro y pintada a mano", price: 49000, category: "materas", image: "./img/materaMaripoza.png" },
     { id: "10", name: "Pocillo", description: "Pocillo Ding-Dong", price: 30000, category: "materas", image: "./img/taza.png" },
     { id: "11", name: "Taza", description: "Taza Ding-Dong pintada a mano", price: 25000, category: "materas", image: "./img/tazasSinOrejas.png" },
-    { id: "12", name: "Azucareras", description: "Azucareras Ding-Dong pintada a mano", price: 25000, category: "materas", image: "./img/tazaTapa.png" },
-    { id: "13", name: "Arturio Rojo ", description: "Este Anturio Rojo requiere riego moderado y prefiere la semi luz. Es una planta con flor que alcanza una altura promedio de 50 cm y puede llegar hasta los 70 cm a los 2 años. Se recomienda fertilizar cada 15 días y no exponerla directamente al sol.", price: 45000, category: "plantas", image: "./img/anturioRojo.png" },
-    { id: "14", name: "Arbol de Jade", description: "Es ideal para quienes buscan una planta de bajo mantenimiento. Requiere riego escaso y prefiere la exposición directa al sol.  Su altura promedio es de 80 cm. Se recomienda plantarlo a una distancia de 50 cm.", price: 35000, category: "plantas", image: "./img/arbolJade.png" },
+    { id: "12", name: "Azucareras", description: "Azucareras Ding-Dong pintadas a mano", price: 25000, category: "materas", image: "./img/tazaTapa.png" },
+    { id: "13", name: "Arturio Rojo", description: "Este Anturio Rojo requiere riego moderado y prefiere la semi luz. Es una planta con flor que alcanza una altura promedio de 50 cm y puede llegar hasta los 70 cm a los 2 años. Se recomienda fertilizar cada 15 días y no exponerla directamente al sol.", price: 45000, category: "plantas", image: "./img/anturioRojo.png" },
+    { id: "14", name: "Arbol de Jade", description: "Es ideal para quienes buscan una planta de bajo mantenimiento. Requiere riego escaso y prefiere la exposición directa al sol. Su altura promedio es de 80 cm. Se recomienda plantarlo a una distancia de 50 cm.", price: 35000, category: "plantas", image: "./img/arbolJade.png" },
     { id: "15", name: "Cinata", description: "Purificadora de aire: Es excelente para eliminar contaminantes del hogar como el monóxido de carbono y el formaldehído.", price: 48000, category: "plantas", image: "./img/cinta.png" },
     { id: "16", name: "Cuerno de Alce", description: "Requiere luz brillante indirecta. Evita el sol directo, ya que sus hojas son muy sensibles y pueden quemarse fácilmente, apareciendo manchas negras o amarillentas.", price: 40000, category: "plantas", image: "./img/cuernoDeAlce.png" },
-    { id: "17", name: "Espatifilo", description: "Conocido también como cuna de Moisés o lirio de la paz, es una de las plantas de interior más completas: es elegante, purifica el aire y es sorprendentemente resistente. ", price: 55000, category: "plantas", image: "./img/espatifilo.png" },
+    { id: "17", name: "Espatifilo", description: "Conocido también como cuna de Moisés o lirio de la paz, es una de las plantas de interior más completas: es elegante, purifica el aire y es sorprendentemente resistente.", price: 55000, category: "plantas", image: "./img/espatifilo.png" },
     { id: "18", name: "Jeranios Rojos", description: "Son los reyes de los balcones y terrazas gracias a su color vibrante y su resistencia extrema al sol. Simbolizan fuerza y protección, y son ideales para dar un toque mediterráneo a cualquier espacio exterior.", price: 65000, category: "plantas", image: "./img/geraniosRojos.png" },
-    { id: "19", name: "Planta de Jade", description: "También conocida como árbol de la abundancia o del dinero, es una de las suculentas más apreciadas en el mundo por su longevidad y su asociación con la prosperidad en el Feng Shui. ", price: 39000, category: "plantas", image: "./img/jade.png" },
-    { id: "20", name: "Lavanda ", description: "Planta aromática mediterránea sumamente valorada por su fragancia relajante, su color púrpura vibrante y su capacidad para atraer polinizadores como abejas y mariposas. Es una especie rústica que, aunque fácil de cuidar, requiere condiciones específicas de luz y drenaje para no morir", price: 45000, category: "plantas", image: "./img/lavanda.png" },
+    { id: "19", name: "Planta de Jade", description: "También conocida como árbol de la abundancia o del dinero, es una de las suculentas más apreciadas en el mundo por su longevidad y su asociación con la prosperidad en el Feng Shui.", price: 39000, category: "plantas", image: "./img/jade.png" },
+    { id: "20", name: "Lavanda", description: "Planta aromática mediterránea sumamente valorada por su fragancia relajante, su color púrpura vibrante y su capacidad para atraer polinizadores como abejas y mariposas. Es una especie rústica que, aunque fácil de cuidar, requiere condiciones específicas de luz y drenaje para no morir.", price: 45000, category: "plantas", image: "./img/lavanda.png" },
     { id: "21", name: "Lengua de Suegra", description: "También conocida como planta de serpiente o espada de San Jorge, es probablemente la planta de interior más resistente que existe. Es la opción ideal para principiantes o personas con poco tiempo, ya que es casi indestructible.", price: 45000, category: "plantas", image: "./img/LenguaSuegra.png" },
-    { id: "22", name: "Costilla de Adán ", description: "Es una planta trepadora de la selva tropical que destaca por los agujeros naturales de sus hojas (fenestraciones), que permiten que la luz y el viento pasen a través de ellas sin romperlas.", price: 42000, category: "plantas", image: "./img/Monstera.png" },
-    { id: "23", name: "El Potos ", description: "Es la planta de interior por excelencia: es casi imposible de matar, crece rapidísimo y queda espectacular colgando de estantes o trepando por las paredes. ", price: 35000, category: "plantas", image: "./img/potos.png" },
-    { id: "24", name: "Suculentas ", description: "son plantas fascinantes que almacenan agua en sus hojas, tallos o raíces, lo que las hace extremadamente resistentes a la sequía. Son ideales para interiores y exteriores debido a su gran variedad de formas, colores y facilidad de mantenimiento.", price: 55000, category: "plantas", image: "./img/suculentas.png" },
-    { id: "25", name: "Soporte Pared ", description: "Elegante ,sutil el negro en la madera es perfecto para esa pared que quieres adornar ", price: 55000, category: "madera", image: "./img/dosNe.jpeg" },
-{ id: "26", name: "Esquinero ", description: "Del color que quieras , perfecto para darle tu toque a esos espacios especiales", price: 180000, category: "madera", image: "./img/esquineroB.jpeg" },
-{ id: "27", name: "Esquinero ", description: "Del color que quieras , perfecto para darle tu toque a esos espacios especiales", price: 180000, category: "madera", image: "./img/esquineroM.jpeg" },
-{ id: "28", name: "Esquinero ", description: "Cree un ambiente elegante y moderno en la sala de estar con un color de pintura negro nítido.", price: 180000, category: "madera", image: "./img/esquineroN.jpeg" },
-{ id: "29", name: "Butaco", description: "Pada dos materas, minimalista perfecto para cualquier espacio", price: 110000, category: "madera", image: "./img/soDos.jpeg" },
-{ id: "30", name: "Soporte ", description: "Para esas suculentas que tanto te gustan", price: 60000, category: "madera", image: "./img/soP.jpeg" },
-{ id: "31", name: "Soporte ", description: "Queda elegante para tu sala y balcon ", price: 75000, category: "madera", image: "./img/soUno.jpeg" },
-{ id: "32", name: "Bancos ", description: "Bancos para darle ese toque especial, en tu jardin", price: 125000, category: "madera", image: "./img/btres.jpeg" },
-{ id: "33", name: "Butaco ", description: "Esa matera que te gusta , espera este butaco. ¡Espectacular!.", price: 65000, category: "madera", image: "./img/soU.jpeg" },
-
-{ id: "34", name: "Soporte de piso en metal", description: "Amarillo vibrante con un arco decorativo en la parte superior. Dispone de tres bases circulares a diferentes alturas y una repisa rectangular con varillas en la parte inferior, lo que permite organizar varias macetas en un espacio compacto.", price: 150000, category: "metal", image: "./img/a2.jpeg" },
-{ id: "35", name: "Base tipo mesa ", description: "Es una base de metal negro de estilo moderno de mediados de siglo. Cuenta con una estructura circular en la parte inferior para mayor estabilidad y cuatro patas delgadas que elevan la maceta a una altura de mesa.", price: 85000, category: "metal", image: "./img/b1.jpeg" },
-{ id: "36", name: "Esquinero rojo", description: "Presenta un estilo funcional y decorativo con un arco superior que le da un toque clásico. Las baldas tienen una forma de cuarto de círculo para encajar perfectamente en las esquinas.", price: 255000, category: "metal", image: "./img/e5.jpeg" },
-{ id: "37", name: "Soporte negro ", description: "¡Inperdible!, soporte para plantas de varios niveles con un diseño asimétrico y moderno, ideal para organizar macetas en espacios verticales.", price: 320000, category: "metal", image: "./img/e6.jpeg" },
-{ id: "38", name: "Soporte Pared ", description: "Es ideal para macetas pequeñas de entre 10 y 12 cm de diámetro. Al ser un diseño vertical, es perfecto para decorar paredes en espacios reducidos como pasillos, balcones o estudios.", price: 155000, category: "metal", image: "./img/n3.jpeg" },
-{ id: "39", name: "Base piso ", description: "Transforma cualquier rincón de tu hogar u oficina con este elegante soporte metálico de doble nivel. Diseñado para quienes buscan un toque de diseño contemporáneo y funcionalidad, este organizador eleva la belleza de tus plantas favoritas mientras ahorra espacio en tus superficies.", price: 155000, category: "metal", image: "./img/r2.jpeg" },
-{ id: "40", name: "Soporte Pared ¡Jardín Vertical! ", description: "Dale vida a tus paredes con este exclusivo estante metálico de 4 niveles. Diseñado para transformar espacios vacíos en oasis vibrantes, este soporte combina un diseño minimalista con la máxima eficiencia espacial, ideal para los amantes de la decoración botánica moderna.", price: 55000, category: "metal", image: "./img/v4.jpeg" },
-
+    { id: "22", name: "Costilla de Adán", description: "Es una planta trepadora de la selva tropical que destaca por los agujeros naturales de sus hojas (fenestraciones), que permiten que la luz y el viento pasen a través de ellas sin romperlas.", price: 42000, category: "plantas", image: "./img/Monstera.png" },
+    { id: "23", name: "El Potos", description: "Es la planta de interior por excelencia: es casi imposible de matar, crece rapidísimo y queda espectacular colgando de estantes o trepando por las paredes.", price: 35000, category: "plantas", image: "./img/potos.png" },
+    { id: "24", name: "Suculentas", description: "Son plantas fascinantes que almacenan agua en sus hojas, tallos o raíces, lo que las hace extremadamente resistentes a la sequía. Son ideales para interiores y exteriores debido a su gran variedad de formas, colores y facilidad de mantenimiento.", price: 55000, category: "plantas", image: "./img/suculentas.png" },
+    { id: "25", name: "Soporte Pared", description: "Elegante y sutil. El negro en la madera es perfecto para esa pared que quieres adornar.", price: 55000, category: "madera", image: "./img/dosNe.jpeg" },
+    { id: "26", name: "Esquinero", description: "Del color que quieras, perfecto para darle tu toque a esos espacios especiales.", price: 180000, category: "madera", image: "./img/esquineroB.jpeg" },
+    { id: "27", name: "Esquinero", description: "Del color que quieras, perfecto para darle tu toque a esos espacios especiales.", price: 180000, category: "madera", image: "./img/esquineroM.jpeg" },
+    { id: "28", name: "Esquinero", description: "Crea un ambiente elegante y moderno en la sala de estar con un color de pintura negro nítido.", price: 180000, category: "madera", image: "./img/esquineroN.jpeg" },
+    { id: "29", name: "Butaco", description: "Para dos materas, minimalista, perfecto para cualquier espacio.", price: 110000, category: "madera", image: "./img/soDos.jpeg" },
+    { id: "30", name: "Soporte", description: "Para esas suculentas que tanto te gustan.", price: 60000, category: "madera", image: "./img/soP.jpeg" },
+    { id: "31", name: "Soporte", description: "Queda elegante para tu sala y balcón.", price: 75000, category: "madera", image: "./img/soUno.jpeg" },
+    { id: "32", name: "Bancos", description: "Bancos para darle ese toque especial a tu jardín.", price: 125000, category: "madera", image: "./img/btres.jpeg" },
+    { id: "33", name: "Butaco", description: "Esa matera que te gusta espera este butaco. ¡Espectacular!.", price: 65000, category: "madera", image: "./img/soU.jpeg" },
+    { id: "34", name: "Soporte de piso en metal", description: "Amarillo vibrante con un arco decorativo en la parte superior. Dispone de tres bases circulares a diferentes alturas y una repisa rectangular con varillas en la parte inferior, lo que permite organizar varias macetas en un espacio compacto.", price: 150000, category: "metal", image: "./img/a2.jpeg" },
+    { id: "35", name: "Base tipo mesa", description: "Es una base de metal negro de estilo moderno de mediados de siglo. Cuenta con una estructura circular en la parte inferior para mayor estabilidad y cuatro patas delgadas que elevan la maceta a una altura de mesa.", price: 85000, category: "metal", image: "./img/b1.jpeg" },
+    { id: "36", name: "Esquinero rojo", description: "Presenta un estilo funcional y decorativo con un arco superior que le da un toque clásico. Las baldas tienen una forma de cuarto de círculo para encajar perfectamente en las esquinas.", price: 255000, category: "metal", image: "./img/e5.jpeg" },
+    { id: "37", name: "Soporte negro", description: "¡Imperdible! Soporte para plantas de varios niveles con un diseño asimétrico y moderno, ideal para organizar macetas en espacios verticales.", price: 320000, category: "metal", image: "./img/e6.jpeg" },
+    { id: "38", name: "Soporte Pared", description: "Es ideal para macetas pequeñas de entre 10 y 12 cm de diámetro. Al ser un diseño vertical, es perfecto para decorar paredes en espacios reducidos como pasillos, balcones o estudios.", price: 155000, category: "metal", image: "./img/n3.jpeg" },
+    { id: "39", name: "Base piso", description: "Transforma cualquier rincón de tu hogar u oficina con este elegante soporte metálico de doble nivel. Diseñado para quienes buscan un toque de diseño contemporáneo y funcionalidad, este organizador eleva la belleza de tus plantas favoritas mientras ahorra espacio en tus superficies.", price: 155000, category: "metal", image: "./img/r2.jpeg" },
+    { id: "40", name: "Soporte Pared ¡Jardín Vertical!", description: "Dale vida a tus paredes con este exclusivo estante metálico de 4 niveles. Diseñado para transformar espacios vacíos en oasis vibrantes, este soporte combina un diseño minimalista con la máxima eficiencia espacial, ideal para los amantes de la decoración botánica moderna.", price: 55000, category: "metal", image: "./img/v4.jpeg" }
   ];
+}
+
+function normalizeCategory(category) {
+  return String(category || "").trim().toLowerCase();
+}
+
+function getStoredCart() {
+  try {
+    return JSON.parse(localStorage.getItem(STORE_CART_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCart() {
+  localStorage.setItem(STORE_CART_KEY, JSON.stringify(cart));
+}
+
+function loadCart() {
+  cart = getStoredCart();
+  updateCart();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
   loadCart();
+  bindSearch();
+  bindFilterButtons();
+});
 
+function bindSearch() {
   const searchInput = document.getElementById("search-input");
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      searchTerm = e.target.value.toLowerCase().trim();
+  if (!searchInput) return;
+
+  searchInput.addEventListener("input", (e) => {
+    searchTerm = e.target.value.toLowerCase().trim();
+    applyFiltersAndSearch();
+  });
+}
+
+function bindFilterButtons() {
+  const buttons = document.querySelectorAll(".filter-btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      buttons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
       applyFiltersAndSearch();
     });
-  }
-});
+  });
+}
 
 async function loadProducts() {
   try {
     const response = await fetch("./productos.json");
+
     if (response.ok) {
-      products = await response.json();
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        products = data;
+      } else {
+        console.warn("productos.json no contiene un arreglo válido.");
+      }
     }
   } catch (error) {
     console.warn("No se pudo cargar productos.json, usando productos de respaldo.", error);
@@ -80,35 +122,50 @@ async function loadProducts() {
   applyFiltersAndSearch();
 }
 
-function applyFiltersAndSearch() {
+function getActiveCategory() {
   const activeFilter = document.querySelector(".filter-btn.active");
-  let category = "todos";
+  if (!activeFilter) return "todos";
 
-  if (activeFilter) {
-    const filterText = activeFilter.textContent.toLowerCase();
-    if (filterText === "plantas") category = "plantas";
-    else if (filterText === "materas") category = "materas";
-    else if (filterText === "madera") category = "madera";
-    else if (filterText === "metal") category = "metal";
-    else if (filterText === "cursos") category = "cursos";
-    else if (filterText === "velas") category = "velas";
-  }
+  const dataCategory = activeFilter.dataset.category;
+  if (dataCategory) return normalizeCategory(dataCategory);
+
+  const filterText = activeFilter.textContent.toLowerCase().trim();
+
+  if (filterText.includes("plantas")) return "plantas";
+  if (filterText.includes("materas")) return "materas";
+  if (filterText.includes("madera")) return "madera";
+  if (filterText.includes("metal")) return "metal";
+  if (filterText.includes("cursos")) return "cursos";
+  if (filterText.includes("velas")) return "velas";
+
+  return "todos";
+}
+
+function applyFiltersAndSearch() {
+  const category = getActiveCategory();
 
   let filtered = products;
-  if (category !== "todos") filtered = filtered.filter(p => p.category === category);
+
+  if (category !== "todos") {
+    filtered = filtered.filter((p) => normalizeCategory(p.category) === category);
+  }
+
   if (searchTerm) {
     filtered = filtered.filter((p) =>
-      (p.name || "").toLowerCase().includes(searchTerm) ||
-      (p.description || "").toLowerCase().includes(searchTerm)
+      String(p.name || "").toLowerCase().includes(searchTerm) ||
+      String(p.description || "").toLowerCase().includes(searchTerm)
     );
   }
+
   displayProducts(filtered);
 }
 
 function displayProducts(items) {
   const container = document.getElementById("products-container");
   if (!container) return;
+
   container.innerHTML = "";
+
   if (!items.length) {
     container.innerHTML = '<p style="text-align:center; grid-column:1/-1; padding:2rem;">No se encontraron productos.</p>';
     return;
@@ -119,93 +176,127 @@ function displayProducts(items) {
     card.className = "product-card";
 
     const whatsappMessage = encodeURIComponent(
-      `Hola Ding-Dong, me interesa el producto: ${product.name} - $${Number(product.price || 0).toLocaleString('es-CO')}`
+      `Hola Ding-Dong, me interesa el producto: ${product.name} - $${Number(product.price || 0).toLocaleString("es-CO")}`
     );
     const whatsappUrl = `https://wa.me/573136254423?text=${whatsappMessage}`;
-    const extraButton = product.category === "cursos"
+
+    const extraButton = normalizeCategory(product.category) === "cursos"
       ? `<a href="./cursos/login.html" class="btn-primary" style="margin-top:10px; display:inline-block;">Ingresar a cursos</a>`
       : "";
 
     card.innerHTML = `
-      <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+      <img
+        src="${product.image}"
+        alt="${product.name}"
+        class="product-image"
+        loading="lazy"
+        onerror="this.onerror=null;this.src='./img/logoSinFondo1.png';"
+      >
       <div class="product-info">
         <h3>${product.name}</h3>
-        <p class="product-description">${product.description || ''}</p>
-        <p class="product-price">$${Number(product.price || 0).toLocaleString('es-CO')}</p>
+        <p class="product-description">${product.description || ""}</p>
+        <p class="product-price">$${Number(product.price || 0).toLocaleString("es-CO")}</p>
         <button class="add-to-cart" onclick="addToCart('${product.id}')">Agregar al carrito</button>
-        <a href="${whatsappUrl}" target="_blank" class="whatsapp-product">Consultar por WhatsApp</a>
+        <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="whatsapp-product">Consultar por WhatsApp</a>
         ${extraButton}
       </div>
     `;
+
     container.appendChild(card);
   });
 }
 
 function filterProducts(category) {
   const buttons = document.querySelectorAll(".filter-btn");
+
   buttons.forEach((btn) => {
     btn.classList.remove("active");
-    if ((category === "todos" && btn.textContent === "Todos") || btn.textContent.toLowerCase().includes(category)) {
+
+    const text = btn.textContent.toLowerCase().trim();
+    const btnCategory = normalizeCategory(btn.dataset.category || "");
+
+    if (
+      (category === "todos" && (text === "todos" || btnCategory === "todos")) ||
+      btnCategory === category ||
+      text.includes(category)
+    ) {
       btn.classList.add("active");
     }
   });
+
   applyFiltersAndSearch();
 }
 
 function addToCart(productId) {
-  const product = products.find((p) => p.id === productId);
+  const product = products.find((p) => String(p.id) === String(productId));
   if (!product) return;
-  const existingItem = cart.find((item) => item.id === productId);
-  if (existingItem) existingItem.quantity += 1;
-  else cart.push({ ...product, quantity: 1 });
+
+  const existingItem = cart.find((item) => String(item.id) === String(productId));
+
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
+
   updateCart();
   saveCart();
   showNotification("Producto agregado al carrito");
 }
 
 function updateCart() {
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+
   const cartCount = document.getElementById("cart-count");
   if (cartCount) cartCount.textContent = String(totalItems);
+
   const cartItems = document.getElementById("cart-items");
   if (!cartItems) return;
+
   cartItems.innerHTML = "";
   let total = 0;
+
   cart.forEach((item) => {
-    total += Number(item.price || 0) * item.quantity;
+    total += Number(item.price || 0) * Number(item.quantity || 0);
+
     const row = document.createElement("div");
     row.className = "cart-item";
     row.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" loading="lazy">
+      <img src="${item.image}" alt="${item.name}" loading="lazy" onerror="this.onerror=null;this.src='./img/logoSinFondo1.png';">
       <div class="cart-item-info">
         <div class="cart-item-title">${item.name}</div>
-        <div class="cart-item-price">$${Number(item.price || 0).toLocaleString('es-CO')}</div>
+        <div class="cart-item-price">$${Number(item.price || 0).toLocaleString("es-CO")}</div>
         <div class="cart-item-quantity">
           <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
           <span>${item.quantity}</span>
           <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
           <i class="fas fa-trash remove-item" onclick="removeFromCart('${item.id}')" title="Eliminar"></i>
         </div>
-      </div>`;
+      </div>
+    `;
     cartItems.appendChild(row);
   });
+
   const cartTotal = document.getElementById("cart-total");
-  if (cartTotal) cartTotal.textContent = `$${total.toLocaleString('es-CO')}`;
+  if (cartTotal) cartTotal.textContent = `$${total.toLocaleString("es-CO")}`;
 }
 
 function updateQuantity(productId, change) {
-  const item = cart.find((i) => i.id === productId);
+  const item = cart.find((i) => String(i.id) === String(productId));
   if (!item) return;
+
   item.quantity += change;
-  if (item.quantity <= 0) removeFromCart(productId);
-  else {
+
+  if (item.quantity <= 0) {
+    removeFromCart(productId);
+  } else {
     updateCart();
     saveCart();
   }
 }
 
 function removeFromCart(productId) {
-  cart = cart.filter((item) => item.id !== productId);
+  cart = cart.filter((item) => String(item.id) !== String(productId));
   updateCart();
   saveCart();
 }
@@ -216,24 +307,21 @@ function toggleCart() {
   sidebar.classList.toggle("active");
 }
 
-function saveCart() {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-function loadCart() {
-  try {
-    cart = JSON.parse(localStorage.getItem("cart")) || [];
-  } catch {
-    cart = [];
-  }
-  updateCart();
-}
-
 function showNotification(message) {
   const notification = document.createElement("div");
   notification.className = "notification";
   notification.textContent = message;
-  notification.style.cssText = `position:fixed;top:80px;right:20px;background:#2e7d32;color:#fff;padding:1rem 2rem;border-radius:5px;z-index:1002;box-shadow:0 4px 8px rgba(0,0,0,.2);`;
+  notification.style.cssText = `
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: #2e7d32;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    z-index: 1002;
+    box-shadow: 0 4px 8px rgba(0,0,0,.2);
+  `;
   document.body.appendChild(notification);
   setTimeout(() => notification.remove(), 2500);
 }
@@ -242,31 +330,48 @@ function openPaymentModal() {
   const modal = document.getElementById("payment-modal");
   if (modal) modal.style.display = "flex";
 }
+
 function togglePaymentModal() {
   const modal = document.getElementById("payment-modal");
   if (modal) modal.style.display = "none";
 }
+
 function selectPayment(method) {
   selectedPayment = method;
+
   const instructions = document.getElementById("payment-instructions");
   const text = document.getElementById("instruction-text");
   const button = document.getElementById("confirm-payment-btn");
+
   if (instructions && text && button) {
     instructions.style.display = "block";
     button.style.display = "block";
     text.textContent = `Método seleccionado: ${method}. En esta tienda los pedidos físicos se coordinan por WhatsApp.`;
   }
 }
+
 function confirmPayment() {
-  window.open('https://wa.me/573136254423?text=Hola%20Ding-Dong,%20quiero%20finalizar%20mi%20compra', '_blank');
+  const total = cart.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
+  const summary = cart.map((item) => `${item.name} x${item.quantity}`).join(", ");
+
+  const message = encodeURIComponent(
+    `Hola Ding-Dong, quiero finalizar mi compra.\n\nMétodo: ${selectedPayment || "Sin definir"}\nProductos: ${summary}\nTotal: $${total.toLocaleString("es-CO")}`
+  );
+
+  window.open(`https://wa.me/573136254423?text=${message}`, "_blank", "noopener,noreferrer");
 }
+
 function toggleSocialMenu() {
   const menu = document.getElementById("socialMenu");
   const btn = document.getElementById("socialMainBtn");
+
   if (menu) menu.classList.toggle("active");
   if (btn) btn.classList.toggle("active");
 }
-function trackSocialClick() {}
+
+function trackSocialClick() {
+  // Espacio reservado para analítica futura
+}
 
 window.addToCart = addToCart;
 window.filterProducts = filterProducts;

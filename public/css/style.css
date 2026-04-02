@@ -112,8 +112,10 @@ body {
 
 /* Botones */
 .btn-primary {
+    margin-left: 40px;  /* Lo mueve a la derecha */
+    margin-top: 150px;   /* Lo baja */
     display: inline-block;
-    padding: 1rem 2rem;
+    padding: 0.5rem 1rem;
     background: #4eac54;
     color: white;
     text-decoration: none;

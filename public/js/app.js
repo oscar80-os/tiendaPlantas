@@ -137,6 +137,9 @@ function getActiveCategory() {
   if (filterText.includes("metal")) return "metal";
   if (filterText.includes("cursos")) return "cursos";
   if (filterText.includes("velas")) return "velas";
+  if (filterText.includes("hierbas")) return "Hierbas";
+  if (filterText.includes("especias")) return "especias";
+  if (filterText.includes("hogareños")) return "hogareños";
 
   return "todos";
 }

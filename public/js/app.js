@@ -152,6 +152,7 @@ function getActiveCategory() {
   if (filterText.includes("hierbas")) return "Hierbas";
   if (filterText.includes("especias")) return "Especias";
   if (filterText.includes("hogareños")) return "hogareños";
+  if (filterText.includes("bisuteria")) return "Bisuteria";
 
   return "todos";
 }

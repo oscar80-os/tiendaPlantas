@@ -10,22 +10,22 @@ body {
     color: #333;
 }
 
-/* Header y Navegación */
+/* ===== HEADER Y NAVEGACIÓN ===== */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 5%;    /* Reducido ligeramente para compensar altura del logo */
+    padding: 0 5%;
     background: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
-    height: 70px;           /* Altura fija para control exacto */
+    height: 80px;            /* Aumentado ligeramente para dar espacio */
 }
 
-/* Logo con imagen */
+/* Logo */
 .logo {
     display: flex;
     align-items: center;
@@ -40,31 +40,107 @@ body {
 }
 
 .logo img {
-    height: 70px;           /* Ajusta este valor según tu imagen (40-50px) */
+    height: 60px;            /* Ajusta según tu imagen */
     width: auto;
-    max-height: 100%;        /* Nunca superará el contenedor */
+    max-height: 100%;
     object-fit: contain;
 }
 
-/* Ocultamos el h1 si existe (del texto anterior) */
 .logo h1 {
     display: none;
 }
 
-/* Navegación */
+/* Menú principal (lista) */
 .nav-links {
+    list-style: none;
     display: flex;
     gap: 1.5rem;
+    margin: 0;
+    padding: 0;
 }
 
-.nav-links a {
+.nav-links li {
+    position: relative;
+}
+
+.nav-links > li > a {
     text-decoration: none;
     color: #333;
     font-weight: 500;
     transition: color 0.3s;
+    display: inline-block;
+    padding: 0.5rem 0;
 }
 
-.nav-links a:hover {
+.nav-links > li > a:hover {
+    color: #2e7d32;
+}
+
+/* Submenú (dropdown) */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1001;
+    list-style: none;
+}
+
+.dropdown-menu li {
+    width: 100%;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #555;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f5f5f5;
+    color: #2e7d32;
+}
+
+/* Mostrar submenú al pasar el mouse */
+.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu {
+    transform: translateY(10px);
+}
+
+/* Contenedor de iconos a la derecha (redes + carrito) */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Redes sociales en header */
+.social-header {
+    display: flex;
+    gap: 15px;
+}
+
+.social-header a {
+    color: #333;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.social-header a:hover {
     color: #2e7d32;
 }
 
@@ -75,6 +151,11 @@ body {
     font-size: 1.2rem;
 }
 
+.cart-icon i {
+    font-size: 1.4rem;
+    color: #333;
+}
+
 #cart-count {
     position: absolute;
     top: -8px;
@@ -83,8 +164,28 @@ body {
     color: white;
     border-radius: 50%;
     padding: 2px 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    min-width: 18px;
+    text-align: center;
 }
+
+/* Responsive: ocultar menú en móvil (puedes agregar menú hamburguesa) */
+@media (max-width: 1024px) {
+    .nav-links {
+        display: none;
+    }
+    /* Si quieres un menú hamburguesa, aquí agregarías el botón y los estilos */
+}
+
+.nav-links {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+.nav-links li {
+    display: block !important;
+}
+
 
 /* Hero Section */
 .hero {

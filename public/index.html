@@ -12,47 +12,57 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <a href="/">
-                    <img src="img/logoSinFondo1.png">
-                    <h1></h1>
-                </a>
-            </div>
-            <div class="nav-links">
+   <header>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/">
+                <img src="img/logoSinFondo1.png" alt="Logo">
+                <h1></h1>
+            </a>
+        </div>
+        <ul class="nav-links">
+            <li class="dropdown">
                 <a href="#productos">Plantas</a>
-                <a href="#productos">Materas</a>
-                <a href="#productos">Bases Madera</a>
-                <a href="#productos">Bases metal</a>
-                <a href="#productos">Velas</a>
-                <a href="#productos">Hierbas medicinales</a>
-                <a href="#productos">Especias</a>
-                <a href="https://cocinandohogares.web.app" target="_blank" rel="noopener">Hogareños</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#hierbas">Hierbas medicinales</a></li>
+                    <li><a href="#especias">Especias</a></li>
+                    <li><a href="#interior">Plantas interior</a></li>
+                    <li><a href="#exterior">Plantas exterior</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#productos">Bases</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#metal">Metal</a></li>
+                    <li><a href="#madera">Madera</a></li>
+                    <li><a href="#combinacion">Combinación de ambas</a></li>
+                </ul>
+            </li>
+            <li><a href="#productos">Velas</a></li>
+            <li><a href="#productos">Materas</a></li>
+            <li class="dropdown">
+                <a href="#productos">Joyería</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#bisuteria">Bisutería</a></li>
+                    <li><a href="#plateria">Platería</a></li>
+                </ul>
+            </li>
+            <li><a href="https://cocinandohogares.web.app" target="_blank">Hogareños</a></li>
+        </ul>
+        <div class="header-actions">
+            <div class="social-header">
+                <a href="https://www.instagram.com/tiendadingdong2026/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@dingdong_tienda" target="_blank"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.facebook.com/?locale=es_LA" target="_blank"><i class="fab fa-facebook"></i></a>
             </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-               
-                <!-- Redes sociales en header -->
-
-                <div class="social-header">
-                    <a href="https://www.instagram.com/tiendadingdong2026/" target="_blank" title="Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@dingdong_tienda" target="_blank" title="TikTok">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                    <a href="https://www.facebook.com/?locale=es_LA" target="_blank" title="Facebook">
-                        <i class="fab fa-facebook"></i>
-                    </a>
-                </div>
-                <div class="cart-icon" onclick="toggleCart()">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count">0</span>
-                </div>
+            <div class="cart-icon" onclick="toggleCart()">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
+</header>
 
     <!-- Hero Section -->
      

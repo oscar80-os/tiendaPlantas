@@ -48,7 +48,7 @@ function ensureFallbackProducts() {
     { id: "207", name: "Bancos", description: "Bancos para darle ese toque especial a tu jardín.", price: 125000, category: "madera", image: "./img/btres.jpeg" },
     { id: "209", name: "Butaco", description: "Esa matera que te gusta espera este butaco. ¡Espectacular!.", price: 65000, category: "madera", image: "./img/soU.jpeg" },
     { id: "210", name: "Estante Nelson", description: "Dale un toque cálido y orgánico a tus espacios con nuestra estantería fabricada 100% en madera de pino. Este mueble no solo es una solución de almacenamiento robusta, sino también una pieza decorativa que resalta la belleza de las vetas naturales de la madera.", price: 180000, category: "madera", image: "./img/estante_nelson.png" },
-    { id: "211", name: "Porta retrato", description: "Dale un toque cálido y orgánico a tus espacios con nuestra estantería fabricada 100% en madera de pino. Este mueble no solo es una solución de almacenamiento robusta, sino también una pieza decorativa que resalta la belleza de las vetas naturales de la madera. medidas : 8 X 12, 9 X 14, 10 X 15, 13 X 18, 20 X 25, 28 X 30", price: 180000, category: "madera", image: "./img/estante_nelson.png" },
+    { id: "211", name: "Porta retrato", description: " Dale vida a tus recuerdos con la calidez de la madera auténtica. Nuestro portarretrato de diseño minimalista y robusto es la pieza perfecta para cualquier rincón de tu hogar, desde una repisa con plantas hasta tu escritorio favorito. Pequeños: 8 x 12 cm, 9 x 14 cm, 10 x 15 cm. Medianos: 13 x 18 cm, 20 x 15cm, Grande : 28 x 30 cm ", price: 45000, category: "madera", image: "./img/porta_retrato.png" },
         
     
             /*SOPORTES EN METAL Y PRODUCTOS EN METAL*/ 

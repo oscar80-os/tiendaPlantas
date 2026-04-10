@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Resultado del pago | Ding-Dong</title>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -120,8 +116,10 @@
   <div class="container">
     <div class="card">
       <div id="status-icon" class="icon pending">⏳</div>
-      <h1 id="status-title">Verificando pago...</h1>
-      <p id="status-message">Estamos revisando la respuesta del pago.</p>
+      <h1 id="status-title">Verificando tu pago...</h1>
+      <p id="status-message">
+        Estamos esperando la confirmación del pago para activar tu curso.
+      </p>
 
       <div class="details" id="payment-details" style="display:none;">
         <p><strong>Referencia:</strong> <span id="detail-reference">-</span></p>
@@ -135,11 +133,14 @@
       </div>
 
       <p class="small">
-        Si el pago fue aprobado y aún no ves tu curso, vuelve a iniciar sesión y revisa nuevamente.
+        Si tu pago fue aprobado y aún no ves tu curso, espera unos segundos y vuelve a revisar en Mis cursos.
       </p>
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="../js/firebase-config.js"></script>
   <script src="../js/result.js"></script>
 </body>

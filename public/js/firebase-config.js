@@ -13,4 +13,4 @@ if (!firebase.apps.length) {
 
 window.auth = firebase.auth();
 window.db = firebase.firestore();
-window.functionsBaseUrl = "https://us-central1-tienda-ding-dong.cloudfunctions.net";
+window.functionsBaseUrl = "https://createwompicheckout-72svd5mcna-uc.a.run.app".replace("/createWompiCheckout", "");

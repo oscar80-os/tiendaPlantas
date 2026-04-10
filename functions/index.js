@@ -11,37 +11,42 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 const db = admin.firestore();
 
+// Secrets
 const WOMPI_PUBLIC_KEY = defineSecret("WOMPI_PUBLIC_KEY");
 const WOMPI_INTEGRITY_SECRET = defineSecret("WOMPI_INTEGRITY_SECRET");
 const WOMPI_EVENTS_SECRET = defineSecret("WOMPI_EVENTS_SECRET");
 
+// Helpers
 function sha256(text) {
   return crypto.createHash("sha256").update(text, "utf8").digest("hex");
 }
 
 function buildIntegritySignature(reference, amountInCents, currency, integritySecret) {
-  return sha256(${reference}${amountInCents}${currency}${integritySecret});
+  return sha256(`${reference}${amountInCents}${currency}${integritySecret}`);
 }
 
-function verifyWompiEventSignature(eventBody, checksum, secret) {
+function getNestedValue(obj, dottedPath) {
+  return dottedPath.split(".").reduce((acc, key) => acc?.[key], obj);
+}
+
+function verifyWompiEventSignature(eventBody, headerChecksum, secret) {
   try {
     const signature = eventBody?.signature;
     if (!signature || !Array.isArray(signature.properties) || !signature.checksum) {
       return false;
     }
 
-    const values = signature.properties
-      .map((pathKey) => {
-        const parts = pathKey.split(".");
-        let current = eventBody.data;
-        for (const part of parts) current = current?.[part];
-        return current ?? "";
+    const concatenatedValues = signature.properties
+      .map((propPath) => {
+        const value = getNestedValue(eventBody?.data, propPath);
+        return value ?? "";
       })
       .join("");
 
-    const timestamp = eventBody.timestamp || "";
-    const expected = sha256(${values}${timestamp}${secret});
-    return expected === checksum || expected === signature.checksum;
+    const timestamp = eventBody?.timestamp || "";
+    const expected = sha256(`${concatenatedValues}${timestamp}${secret}`);
+
+    return expected === headerChecksum || expected === signature.checksum;
   } catch (error) {
     console.error("Error verificando firma Wompi:", error);
     return false;
@@ -49,7 +54,8 @@ function verifyWompiEventSignature(eventBody, checksum, secret) {
 }
 
 async function findOrderByReference(reference) {
-  const snap = await db.collection("ordenes")
+  const snap = await db
+    .collection("ordenes")
     .where("referenciaWompi", "==", reference)
     .limit(1)
     .get();
@@ -59,7 +65,8 @@ async function findOrderByReference(reference) {
 }
 
 async function inscriptionExists(userId, cursoId) {
-  const snap = await db.collection("inscripciones")
+  const snap = await db
+    .collection("inscripciones")
     .where("userId", "==", userId)
     .where("cursoId", "==", cursoId)
     .limit(1)
@@ -68,6 +75,9 @@ async function inscriptionExists(userId, cursoId) {
   return !snap.empty;
 }
 
+/**
+ * Crea una orden pendiente y devuelve los datos para abrir Wompi Widget
+ */
 exports.createWompiCheckout = onRequest(
   {
     cors: true,
@@ -81,7 +91,9 @@ exports.createWompiCheckout = onRequest(
         }
 
         const authHeader = req.headers.authorization || "";
-        const idToken = authHeader.startsWith("Bearer ") ? authHeader.replace("Bearer ", "") : "";
+        const idToken = authHeader.startsWith("Bearer ")
+          ? authHeader.replace("Bearer ", "")
+          : "";
 
         if (!idToken) {
           return res.status(401).json({ ok: false, error: "Missing auth token" });
@@ -91,10 +103,19 @@ exports.createWompiCheckout = onRequest(
         const userId = decoded.uid;
         const userEmail = decoded.email || "";
 
-        const { cursoId, redirectUrl, customerName = "", customerPhone = "" } = req.body || {};
+        const {
+          cursoId,
+          redirectUrl,
+          customerName = "",
+          customerPhone = ""
+        } = req.body || {};
 
         if (!cursoId) {
           return res.status(400).json({ ok: false, error: "cursoId is required" });
+        }
+
+        if (!redirectUrl) {
+          return res.status(400).json({ ok: false, error: "redirectUrl is required" });
         }
 
         const courseDoc = await db.collection("cursos").doc(cursoId).get();
@@ -112,7 +133,7 @@ exports.createWompiCheckout = onRequest(
 
         const amountInCents = monto * 100;
         const currency = "COP";
-        const reference = curso_${cursoId}_${userId}_${Date.now()};
+        const reference = `curso_${cursoId}_${userId}_${Date.now()}`;
         const integritySignature = buildIntegritySignature(
           reference,
           amountInCents,
@@ -153,12 +174,18 @@ exports.createWompiCheckout = onRequest(
         });
       } catch (error) {
         console.error("Error createWompiCheckout:", error);
-        return res.status(500).json({ ok: false, error: error.message || "Internal error" });
+        return res.status(500).json({
+          ok: false,
+          error: error.message || "Internal error"
+        });
       }
     });
   }
 );
 
+/**
+ * Webhook de Wompi: actualiza orden y crea inscripción
+ */
 exports.wompiWebhook = onRequest(
   {
     cors: false,
@@ -180,6 +207,7 @@ exports.wompiWebhook = onRequest(
       );
 
       if (!signatureOk) {
+        console.error("Firma inválida en webhook de Wompi");
         return res.status(401).send("Invalid signature");
       }
 
@@ -195,11 +223,13 @@ exports.wompiWebhook = onRequest(
 
       const orderDoc = await findOrderByReference(reference);
       if (!orderDoc) {
+        console.warn("Orden no encontrada para referencia:", reference);
         return res.status(200).send("Order not found");
       }
 
       const order = orderDoc.data();
 
+      // Validación básica de monto
       if (Number(order.amountInCents || 0) !== amountInCents) {
         await orderDoc.ref.update({
           estado: "error_monto",
@@ -248,6 +278,9 @@ exports.wompiWebhook = onRequest(
   }
 );
 
+/**
+ * Genera certificado PDF premium con logo y QR
+ */
 exports.generateCertificate = onRequest(
   {
     cors: true
@@ -271,13 +304,15 @@ exports.generateCertificate = onRequest(
         const decoded = await admin.auth().verifyIdToken(idToken);
         const userId = decoded.uid;
         const userEmail = decoded.email || "";
+
         const { cursoId } = req.body || {};
 
         if (!cursoId) {
           return res.status(400).json({ ok: false, error: "cursoId is required" });
         }
 
-        const enrollmentSnap = await db.collection("inscripciones")
+        const enrollmentSnap = await db
+          .collection("inscripciones")
           .where("userId", "==", userId)
           .where("cursoId", "==", cursoId)
           .where("estado", "==", "activo")
@@ -285,7 +320,7 @@ exports.generateCertificate = onRequest(
           .get();
 
         if (enrollmentSnap.empty) {
-          return res.status(403).json({ ok: false, error: "No tienes inscripción activa" });
+          return res.status(403).json({ ok: false, error: "No tienes inscripción activa en este curso" });
         }
 
         const enrollmentDoc = enrollmentSnap.docs[0];
@@ -297,14 +332,26 @@ exports.generateCertificate = onRequest(
         }
 
         const course = courseDoc.data();
+
         const userDoc = await db.collection("usuarios").doc(userId).get();
         const userData = userDoc.exists ? userDoc.data() : {};
 
-        const studentName = userData?.nombre || decoded.name || userEmail || "Estudiante";
-        const courseTitle = course.titulo || course.title || enrollment.tituloCurso || "Curso";
+        const studentName =
+          userData?.nombre ||
+          decoded.name ||
+          userEmail ||
+          "Estudiante";
+
+        const courseTitle =
+          course.titulo ||
+          course.title ||
+          enrollment.tituloCurso ||
+          "Curso";
+
         const issueDate = new Date().toLocaleDateString("es-CO");
-        const verificationCode = CERT-${cursoId}-${userId}-${Date.now()};
-        const verificationUrl = ${req.protocol}://${req.get("host").replace("us-central1-", "").replace(".cloudfunctions.net", ".web.app")}/verificar-certificado.html?code=${encodeURIComponent(verificationCode)};
+        const verificationCode = `CERT-${cursoId}-${userId}-${Date.now()}`;
+        const projectId = process.env.GCLOUD_PROJECT || admin.app().options.projectId;
+        const verificationUrl = `https://${projectId}.web.app/verificar-certificado.html?code=${encodeURIComponent(verificationCode)}`;
 
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage([842, 595]);
@@ -321,18 +368,27 @@ exports.generateCertificate = onRequest(
         const dorado = rgb(0.76, 0.64, 0.24);
         const crema = rgb(0.98, 0.98, 0.96);
 
+        // Fondo y marcos
         page.drawRectangle({ x: 0, y: 0, width, height, color: crema });
         page.drawRectangle({ x: 0, y: height - 70, width, height: 70, color: verde });
         page.drawRectangle({ x: 0, y: 0, width, height: 55, color: verdeClaro });
-        page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, borderColor: verde, borderWidth: 3 });
-        page.drawRectangle({ x: 32, y: 32, width: width - 64, height: height - 64, borderColor: dorado, borderWidth: 1.5 });
+        page.drawRectangle({
+          x: 18, y: 18, width: width - 36, height: height - 36,
+          borderColor: verde, borderWidth: 3
+        });
+        page.drawRectangle({
+          x: 32, y: 32, width: width - 64, height: height - 64,
+          borderColor: dorado, borderWidth: 1.5
+        });
 
+        // Logo
         try {
           const logoPath = path.join(__dirname, "assets", "logo-dingdong.png");
           if (fs.existsSync(logoPath)) {
             const logoBytes = fs.readFileSync(logoPath);
             const logoImage = await pdfDoc.embedPng(logoBytes);
             const dims = logoImage.scale(0.32);
+
             page.drawImage(logoImage, {
               x: (width - dims.width) / 2,
               y: 470,
@@ -340,10 +396,11 @@ exports.generateCertificate = onRequest(
               height: dims.height
             });
           }
-        } catch (e) {
-          console.error("Logo no cargado:", e);
+        } catch (error) {
+          console.error("No se pudo cargar el logo:", error);
         }
 
+        // Encabezados
         page.drawText("DING DONG ACADEMIA", {
           x: 255,
           y: 440,
@@ -377,10 +434,11 @@ exports.generateCertificate = onRequest(
         });
 
         const safeStudentName = String(studentName).toUpperCase();
-        const studentX = Math.max(70, (width - safeStudentName.length * 12.5) / 2);
+        const estimatedNameWidth = safeStudentName.length * 12.5;
+        const studentNameX = Math.max(70, (width - estimatedNameWidth) / 2);
 
         page.drawText(safeStudentName, {
-          x: studentX,
+          x: studentNameX,
           y: 270,
           size: 28,
           font: fontBold,
@@ -402,9 +460,11 @@ exports.generateCertificate = onRequest(
           color: gris
         });
 
-        const courseX = Math.max(80, (width - String(courseTitle).length * 9.6) / 2);
+        const safeCourseTitle = String(courseTitle);
+        const estimatedCourseWidth = safeCourseTitle.length * 9.6;
+        const courseX = Math.max(80, (width - estimatedCourseWidth) / 2);
 
-        page.drawText(String(courseTitle), {
+        page.drawText(safeCourseTitle, {
           x: courseX,
           y: 185,
           size: 24,
@@ -420,7 +480,7 @@ exports.generateCertificate = onRequest(
           color: gris
         });
 
-        page.drawText(Fecha de expedición: ${issueDate}, {
+        page.drawText(`Fecha de expedición: ${issueDate}`, {
           x: 70,
           y: 120,
           size: 13,
@@ -428,7 +488,7 @@ exports.generateCertificate = onRequest(
           color: grisOscuro
         });
 
-        page.drawText(Código de verificación: ${verificationCode}, {
+        page.drawText(`Código de verificación: ${verificationCode}`, {
           x: 70,
           y: 100,
           size: 10,
@@ -459,8 +519,13 @@ exports.generateCertificate = onRequest(
           color: gris
         });
 
+        // QR
         try {
-          const qrDataUrl = await QRCode.toDataURL(verificationUrl, { margin: 1, width: 140 });
+          const qrDataUrl = await QRCode.toDataURL(verificationUrl, {
+            margin: 1,
+            width: 140
+          });
+
           const qrBase64 = qrDataUrl.split(",")[1];
           const qrBytes = Buffer.from(qrBase64, "base64");
           const qrImage = await pdfDoc.embedPng(qrBytes);
@@ -479,8 +544,8 @@ exports.generateCertificate = onRequest(
             font: fontRegular,
             color: gris
           });
-        } catch (e) {
-          console.error("QR no generado:", e);
+        } catch (error) {
+          console.error("No se pudo generar el QR:", error);
         }
 
         page.drawText("Calle 20 # 102-30 Fontibón - Bogotá · Cel: 313 625 4423", {
@@ -500,16 +565,20 @@ exports.generateCertificate = onRequest(
         });
 
         const pdfBytes = await pdfDoc.save();
+
         const bucket = admin.storage().bucket();
         const safeCourse = String(cursoId).replace(/[^a-zA-Z0-9_-]/g, "_");
         const safeUser = String(userId).replace(/[^a-zA-Z0-9_-]/g, "_");
-        const filePath = certificados/${safeUser}/${safeCourse}.pdf;
+        const filePath = `certificados/${safeUser}/${safeCourse}.pdf`;
 
         const file = bucket.file(filePath);
+
         await file.save(Buffer.from(pdfBytes), {
           contentType: "application/pdf",
           resumable: false,
-          metadata: { cacheControl: "private, max-age=0, no-transform" }
+          metadata: {
+            cacheControl: "private, max-age=0, no-transform"
+          }
         });
 
         const [signedUrl] = await file.getSignedUrl({
@@ -543,7 +612,10 @@ exports.generateCertificate = onRequest(
         });
       } catch (error) {
         console.error("Error generateCertificate:", error);
-        return res.status(500).json({ ok: false, error: error.message || "Internal error" });
+        return res.status(500).json({
+          ok: false,
+          error: error.message || "Internal error"
+        });
       }
     });
   }

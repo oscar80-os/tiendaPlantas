@@ -151,6 +151,7 @@ exports.createWompiCheckout = onRequest(
       const now = admin.firestore.FieldValue.serverTimestamp();
 
       const orderRef = await db.collection("ordenes").add({
+        tipo: "curso",
         userId,
         userEmail,
         cursoId,
@@ -181,6 +182,147 @@ exports.createWompiCheckout = onRequest(
       });
     } catch (error) {
       console.error("Error createWompiCheckout:", error);
+      return res.status(500).json({
+        ok: false,
+        error: error.message || "Internal error"
+      });
+    }
+  }
+);
+
+exports.createStoreCheckout = onRequest(
+  {
+    secrets: [WOMPI_PUBLIC_KEY, WOMPI_INTEGRITY_SECRET]
+  },
+  async (req, res) => {
+    setCors(res);
+
+    if (req.method === "OPTIONS") {
+      return res.status(204).send("");
+    }
+
+    try {
+      if (req.method !== "POST") {
+        return res.status(405).json({ ok: false, error: "Method not allowed" });
+      }
+
+      const authHeader = req.headers.authorization || "";
+      const idToken = authHeader.startsWith("Bearer ")
+        ? authHeader.replace("Bearer ", "")
+        : "";
+
+      if (!idToken) {
+        return res.status(401).json({ ok: false, error: "Missing auth token" });
+      }
+
+      const decoded = await admin.auth().verifyIdToken(idToken);
+      const userId = decoded.uid;
+      const userEmail = decoded.email || "";
+
+      const {
+        items = [],
+        shippingCost = 0,
+        redirectUrl,
+        customerName = "",
+        customerPhone = "",
+        shippingAddress = ""
+      } = req.body || {};
+
+      if (!Array.isArray(items) || !items.length) {
+        return res.status(400).json({ ok: false, error: "El carrito está vacío." });
+      }
+
+      if (!redirectUrl) {
+        return res.status(400).json({ ok: false, error: "redirectUrl is required" });
+      }
+
+      const normalizedItems = [];
+      let subtotal = 0;
+
+      for (const item of items) {
+        const productoId = item.productoId || item.id;
+        const cantidad = Number(item.cantidad || item.quantity || 0);
+
+        if (!productoId || cantidad <= 0) continue;
+
+        const productDoc = await db.collection("productos").doc(String(productoId)).get();
+        if (!productDoc.exists) continue;
+
+        const product = productDoc.data();
+        if (product.activo !== true) continue;
+
+        const precioUnitario = Number(product.precio || 0);
+        const itemSubtotal = precioUnitario * cantidad;
+
+        normalizedItems.push({
+          productoId: String(productoId),
+          nombre: product.nombre || "Producto",
+          cantidad,
+          precioUnitario,
+          subtotal: itemSubtotal,
+          imagen: product.imagen || ""
+        });
+
+        subtotal += itemSubtotal;
+      }
+
+      if (!normalizedItems.length) {
+        return res.status(400).json({ ok: false, error: "No hay productos válidos en el carrito." });
+      }
+
+      const envio = Number(shippingCost || 0);
+      const total = subtotal + envio;
+
+      if (total <= 0) {
+        return res.status(400).json({ ok: false, error: "El total es inválido." });
+      }
+
+      const amountInCents = total * 100;
+      const currency = "COP";
+      const reference = `store_${userId}_${Date.now()}`;
+      const integritySignature = buildIntegritySignature(
+        reference,
+        amountInCents,
+        currency,
+        WOMPI_INTEGRITY_SECRET.value()
+      );
+
+      const now = admin.firestore.FieldValue.serverTimestamp();
+
+      const orderRef = await db.collection("ordenes").add({
+        tipo: "tienda",
+        userId,
+        userEmail,
+        items: normalizedItems,
+        subtotal,
+        envio,
+        total,
+        amountInCents,
+        currency,
+        referenciaWompi: reference,
+        estado: "pendiente",
+        proveedor: "wompi_widget",
+        customerName,
+        customerPhone,
+        shippingAddress,
+        fechaCreacion: now,
+        fechaActualizacion: now
+      });
+
+      return res.status(200).json({
+        ok: true,
+        orderId: orderRef.id,
+        checkout: {
+          publicKey: WOMPI_PUBLIC_KEY.value(),
+          currency,
+          amountInCents,
+          reference,
+          redirectUrl,
+          integritySignature
+        }
+      });
+    } catch (error) {
+      console.error("Error createStoreCheckout:", error);
       return res.status(500).json({
         ok: false,
         error: error.message || "Internal error"
@@ -254,6 +396,10 @@ exports.wompiWebhook = onRequest(
         transactionId,
         fechaActualizacion: admin.firestore.FieldValue.serverTimestamp()
       });
+
+      if (order.tipo === "tienda") {
+        return res.status(200).send("OK");
+      }
 
       const alreadyExists = await inscriptionExists(order.userId, order.cursoId);
 

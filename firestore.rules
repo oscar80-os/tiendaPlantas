@@ -23,6 +23,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /productos/{productoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     match /ordenes/{orderId} {
       allow read: if isAdmin() || (signedIn() && request.auth.uid == resource.data.userId);
 
@@ -30,13 +35,10 @@ service cloud.firestore {
         && request.auth.uid == request.resource.data.userId
         && request.resource.data.userId is string
         && request.resource.data.userEmail is string
-        && request.resource.data.cursoId is string
-        && request.resource.data.tituloCurso is string
-        && request.resource.data.monto is number
-        && request.resource.data.amountInCents is number
         && request.resource.data.currency == "COP"
         && request.resource.data.referenciaWompi is string
-        && request.resource.data.estado == "pendiente";
+        && request.resource.data.estado == "pendiente"
+        && request.resource.data.amountInCents is number;
 
       allow update, delete: if false;
     }
@@ -106,3 +108,5 @@ service cloud.firestore {
     }
   }
 }
+
+

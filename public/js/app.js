@@ -5,7 +5,7 @@ let searchTerm = "";
 const STORE_CART_KEY = "dingdong_store_cart";
 
 function ensureFallbackProducts() {
-  return [
+  return [/*
     { id: "1", name: "Matera Artesanal", description: "Matera de barro hecha a mano", price: 45000, category: "materas", image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400" },
     { id: "2", name: "Estante Flotante", description: "Estante de madera de pino", price: 85000, category: "madera", image: "./img/estanteflotante.png" },
     { id: "3", name: "Jarra", description: "Pintada a mano única y exclusiva", price: 55000, category: "materas", image: "./img/jarraPequeña.png" },
@@ -48,7 +48,7 @@ function ensureFallbackProducts() {
     { id: "305", name: "Soporte Pared", description: "Es ideal para macetas pequeñas de entre 10 y 12 cm de diámetro. Al ser un diseño vertical, es perfecto para decorar paredes en espacios reducidos como pasillos, balcones o estudios.", price: 155000, category: "metal", image: "./img/n3.jpeg" },
     { id: "306", name: "Base piso", description: "Transforma cualquier rincón de tu hogar u oficina con este elegante soporte metálico de doble nivel. Diseñado para quienes buscan un toque de diseño contemporáneo y funcionalidad, este organizador eleva la belleza de tus plantas favoritas mientras ahorra espacio en tus superficies.", price: 155000, category: "metal", image: "./img/r2.jpeg" },
     { id: "307", name: "Soporte Pared ¡Jardín Vertical!", description: "Dale vida a tus paredes con este exclusivo estante metálico de 4 niveles. Diseñado para transformar espacios vacíos en oasis vibrantes, este soporte combina un diseño minimalista con la máxima eficiencia espacial, ideal para los amantes de la decoración botánica moderna.", price: 55000, category: "metal", image: "./img/v4.jpeg" }
-  ];
+  */];
 }
 
 function normalizeCategory(category) {

@@ -3,6 +3,7 @@ const CREATE_STORE_CHECKOUT_URL =
   "https://us-central1-tienda-ding-dong.cloudfunctions.net/createStoreCheckout";
 
 const DEFAULT_SHIPPING_COST = 12000;
+const FALLBACK_IMAGE = "/img/logoSinFondo1.png";
 
 function money(value) {
   return new Intl.NumberFormat("es-CO", {
@@ -36,7 +37,7 @@ function normalizeCartItem(item) {
   const nombre = String(item.nombre || item.name || "Producto").trim();
   const cantidad = Math.max(1, Number(item.cantidad || item.quantity || 1));
   const precio = Math.max(0, Number(item.precio || item.price || 0));
-  const imagen = String(item.imagen || item.image || "").trim();
+  const imagen = String(item.imagen || item.image || FALLBACK_IMAGE).trim();
 
   return {
     productoId,
@@ -105,10 +106,10 @@ function renderStoreCartItems() {
       return `
         <div class="store-cart-item" style="display:flex;gap:16px;align-items:center;background:#fff;padding:16px;border-radius:14px;box-shadow:0 8px 18px rgba(0,0,0,.06);margin-bottom:14px;">
           <img
-            src="${item.imagen || "/img/logoSinFondo1.png"}"
+            src="${item.imagen || FALLBACK_IMAGE}"
             alt="${item.nombre}"
             style="width:90px;height:90px;object-fit:cover;border-radius:12px;"
-            onerror="this.onerror=null;this.src='/img/logoSinFondo1.png';"
+            onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}';"
           />
 
           <div style="flex:1;">
@@ -137,29 +138,6 @@ function refreshStoreCartUI(shippingCost = DEFAULT_SHIPPING_COST) {
   updateStoreCartBadge();
   renderStoreCartItems();
   renderStoreSummary(shippingCost);
-}
-
-function addToStoreCart(product) {
-  const normalized = normalizeCartItem(product);
-  if (!normalized.productoId) return;
-
-  const cart = getNormalizedCart();
-  const existing = cart.find((item) => item.productoId === normalized.productoId);
-
-  if (existing) {
-    existing.cantidad += normalized.cantidad || 1;
-  } else {
-    cart.push({
-      productoId: normalized.productoId,
-      nombre: normalized.nombre,
-      cantidad: normalized.cantidad || 1,
-      precio: normalized.precio,
-      imagen: normalized.imagen
-    });
-  }
-
-  saveStoreCart(cart);
-  refreshStoreCartUI();
 }
 
 function increaseStoreItem(productoId) {
@@ -335,7 +313,6 @@ window.addEventListener("DOMContentLoaded", () => {
 window.getStoreCart = getStoreCart;
 window.saveStoreCart = saveStoreCart;
 window.clearStoreCart = clearStoreCart;
-window.addToStoreCart = addToStoreCart;
 window.increaseStoreItem = increaseStoreItem;
 window.decreaseStoreItem = decreaseStoreItem;
 window.removeStoreItem = removeStoreItem;
